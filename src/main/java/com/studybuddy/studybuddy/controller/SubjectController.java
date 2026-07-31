@@ -23,4 +23,20 @@ public class SubjectController {
     public Subject createSubject(@RequestBody Subject subject){
         return subjectRepository.save(subject);
     }
+
+    @PutMapping("/{id}")
+    public Subject updateSubject(@PathVariable Long id, @RequestBody Subject updatedSubject){
+        Subject subject=subjectRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("Subject not found with id "+id));
+        subject.setName(updatedSubject.getName());
+        subject.setExamDate(updatedSubject.getExamDate());
+        subject.setDifficulty(updatedSubject.getDifficulty());
+
+        return subjectRepository.save(subject);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteSubject(@PathVariable Long id){
+        subjectRepository.deleteById(id);
+    }
 }
