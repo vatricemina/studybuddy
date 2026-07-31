@@ -7,6 +7,7 @@ import com.studybuddy.studybuddy.entity.Subject;
 import com.studybuddy.studybuddy.entity.Topic;
 import com.studybuddy.studybuddy.repository.SubjectRepository;
 import com.studybuddy.studybuddy.repository.TopicRepository;
+import com.studybuddy.studybuddy.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,72 +19,27 @@ import java.util.stream.Collectors;
 public class TopicController {
 
     @Autowired
-    private TopicRepository topicRepository;
-
-    @Autowired
-    private SubjectRepository subjectRepository;
+    private TopicService topicService;
 
     @GetMapping
     public List<TopicResponseDTO> getAllTopics(){
-        return topicRepository.findAll()
-                .stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+        return topicService.getAllTopics();
     }
 
     @PostMapping
     public TopicResponseDTO createTopic(@RequestBody TopicRequestDTO requestDTO)
     {
-        Topic topic=toEntity(requestDTO);
-        return toResponseDTO(topicRepository.save(topic));
+        return topicService.createTopic(requestDTO);
     }
 
     @PutMapping("/{id}")
     public TopicResponseDTO updateTopic(@PathVariable Long id, @RequestBody TopicRequestDTO requestDTO){
-        Topic topic=topicRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Topic not found with id "+id));
-
-        topic.setTitle(requestDTO.getTitle());
-        topic.setEstimatedHours(requestDTO.getEstimatedHours());
-        topic.setCompleted(requestDTO.getCompleted());
-
-        Subject subject=subjectRepository.findById(requestDTO.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found with id " + requestDTO.getSubjectId()));
-        topic.setSubject(subject);
-
-        Topic saved=topicRepository.save(topic);
-
-        return toResponseDTO(saved);
+        return topicService.updateTopic(id, requestDTO);
     }
 
     @DeleteMapping("/{id}")
     public void deleteTopic(@PathVariable Long id){
-        topicRepository.deleteById(id);
-    }
-
-
-    //pomocne metode
-    private TopicResponseDTO toResponseDTO(Topic topic){
-        TopicResponseDTO dto=new TopicResponseDTO();
-        dto.setId(topic.getId());
-        dto.setTitle(topic.getTitle());
-        dto.setEstimatedHours(topic.getEstimatedHours());
-        dto.setCompleted(topic.getCompleted());
-        dto.setSubjectId(topic.getSubject().getId());
-        dto.setSubjectName(topic.getSubject().getName());
-        return dto;
-    }
-
-    private Topic toEntity(TopicRequestDTO dto){
-        Topic topic=new Topic();
-        topic.setTitle(dto.getTitle());
-        topic.setEstimatedHours(dto.getEstimatedHours());
-        topic.setCompleted(dto.getCompleted());
-
-        Subject subject=subjectRepository.findById(dto.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found with id " + dto.getSubjectId()));
-        topic.setSubject(subject);
-        return topic;
+        topicService.deleteTopic(id);
     }
 
 }

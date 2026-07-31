@@ -1,7 +1,8 @@
 package com.studybuddy.studybuddy.controller;
 
-import com.studybuddy.studybuddy.entity.Subject;
-import com.studybuddy.studybuddy.repository.SubjectRepository;
+import com.studybuddy.studybuddy.dto.SubjectRequestDTO;
+import com.studybuddy.studybuddy.dto.SubjectResponseDTO;
+import com.studybuddy.studybuddy.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,31 +13,25 @@ import java.util.List;
 public class SubjectController {
 
     @Autowired
-    private SubjectRepository subjectRepository;
+    private SubjectService subjectService;
 
     @GetMapping
-    public List<Subject> getAllSubjects(){
-        return subjectRepository.findAll();
+    public List<SubjectResponseDTO> getAllSubjects(){
+        return subjectService.getAllSubjects();
     }
 
     @PostMapping
-    public Subject createSubject(@RequestBody Subject subject){
-        return subjectRepository.save(subject);
+    public SubjectResponseDTO createSubject(@RequestBody SubjectRequestDTO requestDTO){
+        return subjectService.createSubject(requestDTO);
     }
 
     @PutMapping("/{id}")
-    public Subject updateSubject(@PathVariable Long id, @RequestBody Subject updatedSubject){
-        Subject subject=subjectRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Subject not found with id "+id));
-        subject.setName(updatedSubject.getName());
-        subject.setExamDate(updatedSubject.getExamDate());
-        subject.setDifficulty(updatedSubject.getDifficulty());
-
-        return subjectRepository.save(subject);
+    public SubjectResponseDTO updateSubject(@PathVariable Long id, @RequestBody SubjectRequestDTO requestDTO){
+        return subjectService.updateSubject(id, requestDTO);
     }
 
     @DeleteMapping("/{id}")
     public void deleteSubject(@PathVariable Long id){
-        subjectRepository.deleteById(id);
+        subjectService.deleteSubject(id);
     }
 }
