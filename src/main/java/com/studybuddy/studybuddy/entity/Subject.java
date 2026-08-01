@@ -1,9 +1,6 @@
 package com.studybuddy.studybuddy.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,4 +16,7 @@ public class Subject {
     private LocalDate examDate;
     private Integer difficulty;
 
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
 }

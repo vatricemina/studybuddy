@@ -4,8 +4,10 @@ import com.studybuddy.studybuddy.dto.TopicRequestDTO;
 import com.studybuddy.studybuddy.dto.TopicResponseDTO;
 import com.studybuddy.studybuddy.entity.Subject;
 import com.studybuddy.studybuddy.entity.Topic;
+import com.studybuddy.studybuddy.entity.User;
 import com.studybuddy.studybuddy.repository.SubjectRepository;
 import com.studybuddy.studybuddy.repository.TopicRepository;
+import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,12 @@ public class TopicService {
     @Autowired
     private SubjectRepository subjectRepository;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     public List<TopicResponseDTO> getAllTopics(){
-        return topicRepository.findAll()
+        User currentUser=currentUserService.getCurrentUser();
+        return topicRepository.findBySubjectUserId(currentUser.getId())
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
@@ -39,20 +45,21 @@ public class TopicService {
         Topic topic=topicRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Topic not found with id "+id));
 
+        checkOwnership(topic);
+
         topic.setTitle(requestDTO.getTitle());
         topic.setEstimatedHours(requestDTO.getEstimatedHours());
         topic.setCompleted(requestDTO.getCompleted());
 
-        Subject subject=subjectRepository.findById(requestDTO.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found with id " + requestDTO.getSubjectId()));
-        topic.setSubject(subject);
+        topic.setSubject(getOwnedSubject(requestDTO.getSubjectId()));
 
-        Topic saved=topicRepository.save(topic);
-
-        return toResponseDTO(saved);
+        return toResponseDTO(topicRepository.save(topic));
     }
 
     public void deleteTopic(Long id){
+        Topic topic=topicRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Topic not found with id " + id));
+        checkOwnership(topic);
         topicRepository.deleteById(id);
     }
 
@@ -69,14 +76,31 @@ public class TopicService {
         return dto;
     }
 
+    private Subject getOwnedSubject(Long subjectId){ //vraca predmet iz zahtjeva ako ga trenutni korisnik zaista ima u bazi svojih predmeta
+        Subject subject=subjectRepository.findById(subjectId) //da li uopce taj predmet postoji s tim idem
+                .orElseThrow(() -> new RuntimeException("Subject not found with id " + subjectId));
+        User currentUser=currentUserService.getCurrentUser();
+        if(!subject.getUser().getId().equals(currentUser.getId())){ //da li ga trenutni korisnik posjeduje
+            throw new RuntimeException("You don't own this subject");
+        }
+        return subject;
+
+    }
+
+    private void checkOwnership(Topic topic){
+        User currentUser=currentUserService.getCurrentUser();
+        if(!topic.getSubject().getUser().getId().equals(currentUser.getId())){
+            throw new RuntimeException("You are not allowed to modify this topic");
+        }
+    }
+
     private Topic toEntity(TopicRequestDTO dto){
+        Subject subject=getOwnedSubject(dto.getSubjectId());
         Topic topic=new Topic();
         topic.setTitle(dto.getTitle());
         topic.setEstimatedHours(dto.getEstimatedHours());
         topic.setCompleted(dto.getCompleted());
 
-        Subject subject=subjectRepository.findById(dto.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found with id " + dto.getSubjectId()));
         topic.setSubject(subject);
         return topic;
     }

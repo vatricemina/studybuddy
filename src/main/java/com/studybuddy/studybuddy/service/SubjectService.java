@@ -3,7 +3,9 @@ package com.studybuddy.studybuddy.service;
 import com.studybuddy.studybuddy.dto.SubjectRequestDTO;
 import com.studybuddy.studybuddy.dto.SubjectResponseDTO;
 import com.studybuddy.studybuddy.entity.Subject;
+import com.studybuddy.studybuddy.entity.User;
 import com.studybuddy.studybuddy.repository.SubjectRepository;
+import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +18,22 @@ public class SubjectService {
     @Autowired
     private SubjectRepository subjectRepository;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     public List<SubjectResponseDTO> getAllSubjects(){
-        return subjectRepository.findAll()
+        User currentUser=currentUserService.getCurrentUser();
+        return subjectRepository.findByUserId(currentUser.getId())
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public SubjectResponseDTO createSubject(SubjectRequestDTO requestDTO){
+        User currentUser=currentUserService.getCurrentUser();
+
         Subject subject = toEntity(requestDTO);
+        subject.setUser(currentUser);
         Subject saved = subjectRepository.save(subject);
         return toResponseDTO(saved);
     }
@@ -32,16 +41,29 @@ public class SubjectService {
     public SubjectResponseDTO updateSubject(Long id, SubjectRequestDTO requestDTO){
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Subject not found with id " + id));
+        User currentUser=currentUserService.getCurrentUser();
+        if(!subject.getUser().getId().equals(currentUser.getId())){
+            throw new RuntimeException("You are not allowed to modify this subject");
+        }
 
         subject.setName(requestDTO.getName());
         subject.setExamDate(requestDTO.getExamDate());
         subject.setDifficulty(requestDTO.getDifficulty());
+
 
         Subject saved = subjectRepository.save(subject);
         return toResponseDTO(saved);
     }
 
     public void deleteSubject(Long id){
+        Subject subject=subjectRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Subject not found with id " + id));
+
+        User currentUser=currentUserService.getCurrentUser();
+        if(!subject.getUser().getId().equals(currentUser.getId())){
+            throw new RuntimeException("You are not allowed to delete this subject");
+        }
+
         subjectRepository.deleteById(id);
     }
 

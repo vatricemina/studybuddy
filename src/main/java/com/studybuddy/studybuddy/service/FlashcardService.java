@@ -4,8 +4,10 @@ import com.studybuddy.studybuddy.dto.FlashcardRequestDTO;
 import com.studybuddy.studybuddy.dto.FlashcardResponseDTO;
 import com.studybuddy.studybuddy.entity.Flashcard;
 import com.studybuddy.studybuddy.entity.Topic;
+import com.studybuddy.studybuddy.entity.User;
 import com.studybuddy.studybuddy.repository.FlashcardRepository;
 import com.studybuddy.studybuddy.repository.TopicRepository;
+import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,33 +23,71 @@ public class FlashcardService {
     @Autowired
     private TopicRepository topicRepository;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     public List<FlashcardResponseDTO> getAllFlashcards(){
-        return flashcardRepository.findAll()
+        User currentUser = currentUserService.getCurrentUser();
+        return flashcardRepository.findByTopicSubjectUserId(currentUser.getId())
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public FlashcardResponseDTO createFlashcard(FlashcardRequestDTO requestDTO){
-        return toResponseDTO(flashcardRepository.save(toEntity(requestDTO)));
+        Flashcard flashcard = toEntity(requestDTO);
+        return toResponseDTO(flashcardRepository.save(flashcard));
     }
 
     public FlashcardResponseDTO updateFlashcard(Long id, FlashcardRequestDTO requestDTO){
         Flashcard flashcard = flashcardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Flashcard not found with id " + id));
 
+        checkOwnership(flashcard);
+
         flashcard.setQuestion(requestDTO.getQuestion());
         flashcard.setAnswer(requestDTO.getAnswer());
-
-        Topic topic = topicRepository.findById(requestDTO.getTopicId())
-                .orElseThrow(() -> new RuntimeException("Topic not found with id " + requestDTO.getTopicId()));
-        flashcard.setTopic(topic);
+        flashcard.setTopic(getOwnedTopic(requestDTO.getTopicId()));
 
         return toResponseDTO(flashcardRepository.save(flashcard));
     }
 
     public void deleteFlashcard(Long id){
+        Flashcard flashcard = flashcardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Flashcard not found with id " + id));
+
+        checkOwnership(flashcard);
+
         flashcardRepository.deleteById(id);
+    }
+
+    private Topic getOwnedTopic(Long topicId){
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new RuntimeException("Topic not found with id " + topicId));
+
+        User currentUser = currentUserService.getCurrentUser();
+        if (!topic.getSubject().getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You don't own this topic");
+        }
+        return topic;
+    }
+
+    private void checkOwnership(Flashcard flashcard){
+        User currentUser = currentUserService.getCurrentUser();
+        if (!flashcard.getTopic().getSubject().getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You are not allowed to modify this flashcard");
+        }
+    }
+
+    private Flashcard toEntity(FlashcardRequestDTO dto){
+        Topic topic = getOwnedTopic(dto.getTopicId());
+
+        Flashcard flashcard = new Flashcard();
+        flashcard.setQuestion(dto.getQuestion());
+        flashcard.setAnswer(dto.getAnswer());
+        flashcard.setTopic(topic);
+
+        return flashcard;
     }
 
     private FlashcardResponseDTO toResponseDTO(Flashcard flashcard){
@@ -58,17 +98,5 @@ public class FlashcardService {
         dto.setTopicId(flashcard.getTopic().getId());
         dto.setTopicTitle(flashcard.getTopic().getTitle());
         return dto;
-    }
-
-    private Flashcard toEntity(FlashcardRequestDTO dto){
-        Flashcard flashcard = new Flashcard();
-        flashcard.setQuestion(dto.getQuestion());
-        flashcard.setAnswer(dto.getAnswer());
-
-        Topic topic = topicRepository.findById(dto.getTopicId())
-                .orElseThrow(() -> new RuntimeException("Topic not found with id " + dto.getTopicId()));
-        flashcard.setTopic(topic);
-
-        return flashcard;
     }
 }
