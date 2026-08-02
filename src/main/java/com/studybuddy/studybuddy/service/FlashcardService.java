@@ -1,5 +1,6 @@
 package com.studybuddy.studybuddy.service;
 
+import com.studybuddy.studybuddy.dto.FlashcardAIItem;
 import com.studybuddy.studybuddy.dto.FlashcardRequestDTO;
 import com.studybuddy.studybuddy.dto.FlashcardResponseDTO;
 import com.studybuddy.studybuddy.entity.Flashcard;
@@ -11,6 +12,7 @@ import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,9 @@ public class FlashcardService {
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private GroqService groqService;
 
     public List<FlashcardResponseDTO> getAllFlashcards(){
         User currentUser = currentUserService.getCurrentUser();
@@ -59,6 +64,24 @@ public class FlashcardService {
         checkOwnership(flashcard);
 
         flashcardRepository.deleteById(id);
+    }
+
+    public List<FlashcardResponseDTO> generateFlashcardsForTopic(Long topicId) throws Exception{
+        Topic topic=getOwnedTopic(topicId);
+
+        List<FlashcardAIItem> items=groqService.generateFlashcards(topic.getTitle());
+
+        List<Flashcard> savedFlashcards=new ArrayList<>();
+        for(FlashcardAIItem item:items){
+            Flashcard flashcard=new Flashcard();
+            flashcard.setQuestion(item.getQuestion());
+            flashcard.setAnswer(item.getAnswer());
+            flashcard.setTopic(topic);
+            savedFlashcards.add(flashcardRepository.save(flashcard));
+        }
+        return savedFlashcards.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     private Topic getOwnedTopic(Long topicId){
