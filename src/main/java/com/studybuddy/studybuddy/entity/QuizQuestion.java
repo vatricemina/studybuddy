@@ -13,9 +13,16 @@ public class QuizQuestion {
 
     private String questionText;
     private String correctAnswer;
+    @Column(name = "option_a")
     private String optionA;
+
+    @Column(name = "option_b")
     private String optionB;
+
+    @Column(name = "option_c")
     private String optionC;
+
+    @Column(name = "option_d")
     private String optionD;
 
     @ManyToOne
