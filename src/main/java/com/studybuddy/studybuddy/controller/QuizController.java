@@ -1,5 +1,6 @@
 package com.studybuddy.studybuddy.controller;
 
+import com.studybuddy.studybuddy.dto.GroqQuizRequest;
 import com.studybuddy.studybuddy.dto.QuizRequestDTO;
 import com.studybuddy.studybuddy.dto.QuizResponseDTO;
 import com.studybuddy.studybuddy.service.QuizService;
@@ -23,6 +24,11 @@ public class QuizController {
     @PostMapping
     public QuizResponseDTO createQuiz(@RequestBody QuizRequestDTO requestDTO){
         return quizService.createQuiz(requestDTO);
+    }
+
+    @PostMapping("/generate")
+    public QuizResponseDTO generateQuiz(@RequestBody GroqQuizRequest requestDto)throws Exception{
+        return  quizService.generateQuizForTopic(requestDto.getTopicId());
     }
 
     @PutMapping("/{id}")

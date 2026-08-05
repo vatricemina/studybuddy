@@ -14,6 +14,11 @@ public class GroqRequest {
         this.messages=List.of(new Message("user", prompt));
     }
 
+    public GroqRequest(String model, List<Message> messages){
+        this.model=model;
+        this.messages=messages;
+    }
+
 
     @Data
     public static class Message{

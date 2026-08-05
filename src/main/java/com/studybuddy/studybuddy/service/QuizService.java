@@ -1,16 +1,22 @@
 package com.studybuddy.studybuddy.service;
 
+import com.studybuddy.studybuddy.dto.QuizQuestionAIItem;
+import com.studybuddy.studybuddy.dto.QuizQuestionResponseDTO;
 import com.studybuddy.studybuddy.dto.QuizRequestDTO;
 import com.studybuddy.studybuddy.dto.QuizResponseDTO;
 import com.studybuddy.studybuddy.entity.Quiz;
+import com.studybuddy.studybuddy.entity.QuizQuestion;
 import com.studybuddy.studybuddy.entity.Topic;
 import com.studybuddy.studybuddy.entity.User;
+import com.studybuddy.studybuddy.repository.QuizQuestionRepository;
 import com.studybuddy.studybuddy.repository.QuizRepository;
 import com.studybuddy.studybuddy.repository.TopicRepository;
 import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +30,16 @@ public class QuizService {
     private TopicRepository topicRepository;
 
     @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private GroqService groqService;
+
+    @Autowired
+    private QuizQuestionService quizQuestionService;
 
     public List<QuizResponseDTO> getAllQuizzes(){
         User currentUser = currentUserService.getCurrentUser();
@@ -59,6 +74,51 @@ public class QuizService {
         checkOwnership(quiz);
 
         quizRepository.deleteById(id);
+    }
+
+    public QuizResponseDTO generateQuizForTopic(Long topicId) throws Exception{
+        Topic topic=getOwnedTopic(topicId);
+
+        List<QuizQuestionAIItem> aiQuestions=groqService.generateQuizQuestions(topic.getTitle());
+
+        Quiz quiz=new Quiz();
+        quiz.setGeneratedAt(LocalDateTime.now());
+        quiz.setScore(null);
+        quiz.setTopic(topic);
+        Quiz savedQuiz=quizRepository.save(quiz); //prvo sacuvaj  u bazu da bi svakom pitanju mogao dodijeliti ovaj kviz
+
+        List<QuizQuestionResponseDTO> questionsDTOs=new ArrayList<>();
+        for(QuizQuestionAIItem item:aiQuestions){
+            QuizQuestion question =new QuizQuestion();
+            question.setQuestionText(item.getQuestionText());
+            question.setOptionA(item.getOptionA());
+            question.setOptionB(item.getOptionB());
+            question.setOptionC(item.getOptionC());
+            question.setOptionD(item.getOptionD());
+            question.setCorrectAnswer(item.getCorrectAnswer());
+            question.setQuiz(savedQuiz);
+
+            QuizQuestion savedQuestion=quizQuestionRepository.save(question);
+            questionsDTOs.add(toQuestionResponseDTO(savedQuestion));
+        }
+
+        QuizResponseDTO responseDTO=toResponseDTO(savedQuiz);
+        responseDTO.setQuestions(questionsDTOs);
+        return responseDTO;
+    }
+
+
+    private QuizQuestionResponseDTO toQuestionResponseDTO (QuizQuestion quizQuestion){
+        QuizQuestionResponseDTO dto=new QuizQuestionResponseDTO();
+        dto.setId(quizQuestion.getId());
+        dto.setQuestionText(quizQuestion.getQuestionText());
+        dto.setCorrectAnswer(quizQuestion.getCorrectAnswer());
+        dto.setOptionA(quizQuestion.getOptionA());
+        dto.setOptionB(quizQuestion.getOptionB());
+        dto.setOptionC(quizQuestion.getOptionC());
+        dto.setOptionD(quizQuestion.getOptionD());
+        dto.setQuizId(quizQuestion.getQuiz().getId());
+        return dto;
     }
 
     private Topic getOwnedTopic(Long topicId){

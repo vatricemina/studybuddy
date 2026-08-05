@@ -2,6 +2,7 @@ package com.studybuddy.studybuddy.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class QuizResponseDTO {
@@ -10,4 +11,5 @@ public class QuizResponseDTO {
     private Integer score;
     private Long topicId;
     private String topicTitle;
+    private List<QuizQuestionResponseDTO> questions;
 }
