@@ -1,0 +1,1 @@
+ALTER TABLE study_plan_entry ADD COLUMN focus VARCHAR(500);

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TopicRepository extends JpaRepository<Topic,Long> {
     List<Topic> findBySubjectUserId(Long userId);
+    List<Topic> findBySubjectId(Long subjectId);
 }
