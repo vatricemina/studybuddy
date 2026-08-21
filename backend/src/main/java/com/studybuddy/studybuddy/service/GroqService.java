@@ -103,7 +103,7 @@ public class GroqService {
             messages.add(new GroqRequest.Message(msg.getRole(), msg.getContent()));
         }
 
-        GroqRequest requestBody=new GroqRequest("llama-3.3-70b-versatile", messages);
+        GroqRequest requestBody=new GroqRequest("openai/gpt-oss-120b", messages);
         String jsonBody=objectMapper.writeValueAsString(requestBody);
 
         String url = "https://api.groq.com/openai/v1/chat/completions";

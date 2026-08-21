@@ -10,7 +10,7 @@ public class GroqRequest {
     private List<Message> messages;
 
     public GroqRequest(String prompt){
-        this.model= "llama-3.3-70b-versatile";
+        this.model= "openai/gpt-oss-120b";
         this.messages=List.of(new Message("user", prompt));
     }
 
