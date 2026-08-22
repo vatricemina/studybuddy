@@ -1,9 +1,11 @@
 import {useState} from 'react';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 
 function LoginPage(){
     const [email, setEmail]=useState("");
     const [password, setPassword]=useState("");
+    const navigate=useNavigate();
 
     async function handleLogin(){
         try{
@@ -12,10 +14,11 @@ function LoginPage(){
                 password: password
             });
 
-            console.log("uspjesno! token: ", response.data.token);
+            localStorage.setItem("token", response.data.token);
+            navigate("/dashboard");
 
         }catch(error){
-            console.log("greska: ", error);
+            console.log("Greska pri loginu: ", error);
         }
     }
 
@@ -35,7 +38,7 @@ function LoginPage(){
                 value={password}
                 onChange={(e)=> setPassword(e.target.value)}
             />
-            <button onClick={handleLogin}> prijavi se</button>
+            <button onClick={handleLogin}>Prijavi se</button>
 
         </div>
     );
