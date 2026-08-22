@@ -2,7 +2,7 @@ function DashboardPage(){
     return (
         <div>
             <h1>Dashboard</h1>
-            <p>Uspjesno si ulogovana yeee</p>
+            <p>Successfully logged in!</p>
         </div>
     );
 }

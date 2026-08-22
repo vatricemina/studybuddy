@@ -38,7 +38,7 @@ function LoginPage(){
                 value={password}
                 onChange={(e)=> setPassword(e.target.value)}
             />
-            <button onClick={handleLogin}>Prijavi se</button>
+            <button onClick={handleLogin}>Sign in</button>
 
         </div>
     );
