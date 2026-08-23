@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import TopicsPage from './pages/TopicsPage';
 
 function App() {
   return (
@@ -21,6 +22,14 @@ function App() {
                   <ProtectedRoute>
                       <DashboardPage />
                   </ProtectedRoute>}
+          />
+          <Route
+              path="/subjects/:subjectId/topics"
+              element={
+                  <ProtectedRoute>
+                      <TopicsPage/>
+                  </ProtectedRoute>
+              }
           />
       </Routes>
   );
