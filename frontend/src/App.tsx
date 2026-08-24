@@ -9,6 +9,12 @@ import DashboardPage from './pages/DashboardPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import TopicsPage from './pages/TopicsPage';
+import FlashcardsPage from './pages/FlashcardsPage';
+import QuizPage from './pages/QuizPage';
+import QuizHistoryPage from './pages/QuizHistoryPage';
+import QuizDetailPage from './pages/QuizDetailPage';
+
+
 
 function App() {
   return (
@@ -28,6 +34,38 @@ function App() {
               element={
                   <ProtectedRoute>
                       <TopicsPage/>
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/topics/:topicId/flashcards"
+              element={
+                  <ProtectedRoute>
+                      <FlashcardsPage />
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+            path="/topics/:topicId/quiz"
+            element={
+                <ProtectedRoute>
+                    <QuizPage />
+                </ProtectedRoute>
+            }
+          />
+          <Route
+              path="/topics/:topicId/quiz/history"
+              element={
+                  <ProtectedRoute>
+                      <QuizHistoryPage />
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/quizzes/:quizId"
+              element={
+                  <ProtectedRoute>
+                      <QuizDetailPage />
                   </ProtectedRoute>
               }
           />

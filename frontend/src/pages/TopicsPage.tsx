@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 function TopicsPage(){
@@ -50,7 +50,10 @@ function TopicsPage(){
             <h1>Topics</h1>
             <ul>
                 {topics.map((topic)=>(
-                    <li key={topic.id}>{topic.title}</li>
+                    <li key={topic.id}>{topic.title}
+                        <Link to={`/topics/${topic.id}/flashcards`}>Generate Flashcards</Link>
+                        <Link to={`/topics/${topic.id}/quiz`}>Generate quiz</Link>
+                    </li>
                 ))}
             </ul>
 
