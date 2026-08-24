@@ -53,6 +53,7 @@ function TopicsPage(){
                     <li key={topic.id}>{topic.title}
                         <Link to={`/topics/${topic.id}/flashcards`}>Generate Flashcards</Link>
                         <Link to={`/topics/${topic.id}/quiz`}>Generate quiz</Link>
+                        <Link to={`/topics/${topic.id}/chat`}>Chat</Link>
                     </li>
                 ))}
             </ul>

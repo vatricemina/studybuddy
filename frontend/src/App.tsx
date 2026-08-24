@@ -13,6 +13,9 @@ import FlashcardsPage from './pages/FlashcardsPage';
 import QuizPage from './pages/QuizPage';
 import QuizHistoryPage from './pages/QuizHistoryPage';
 import QuizDetailPage from './pages/QuizDetailPage';
+import ChatPage from './pages/ChatPage';
+import Layout from './components/Layout';
+
 
 
 
@@ -22,18 +25,24 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+
           <Route
               path="/dashboard"
               element={
                   <ProtectedRoute>
-                      <DashboardPage />
-                  </ProtectedRoute>}
+                      <Layout>
+                          <DashboardPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
           />
           <Route
               path="/subjects/:subjectId/topics"
               element={
                   <ProtectedRoute>
-                      <TopicsPage/>
+                      <Layout>
+                          <TopicsPage />
+                      </Layout>
                   </ProtectedRoute>
               }
           />
@@ -41,23 +50,29 @@ function App() {
               path="/topics/:topicId/flashcards"
               element={
                   <ProtectedRoute>
-                      <FlashcardsPage />
+                      <Layout>
+                          <FlashcardsPage />
+                      </Layout>
                   </ProtectedRoute>
               }
           />
           <Route
-            path="/topics/:topicId/quiz"
-            element={
-                <ProtectedRoute>
-                    <QuizPage />
-                </ProtectedRoute>
-            }
+              path="/topics/:topicId/quiz"
+              element={
+                  <ProtectedRoute>
+                      <Layout>
+                          <QuizPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
           />
           <Route
               path="/topics/:topicId/quiz/history"
               element={
                   <ProtectedRoute>
-                      <QuizHistoryPage />
+                      <Layout>
+                          <QuizHistoryPage />
+                      </Layout>
                   </ProtectedRoute>
               }
           />
@@ -65,11 +80,25 @@ function App() {
               path="/quizzes/:quizId"
               element={
                   <ProtectedRoute>
-                      <QuizDetailPage />
+                      <Layout>
+                          <QuizDetailPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/topics/:topicId/chat"
+              element={
+                  <ProtectedRoute>
+                      <Layout>
+                          <ChatPage />
+                      </Layout>
                   </ProtectedRoute>
               }
           />
       </Routes>
+
+
   );
 }
 

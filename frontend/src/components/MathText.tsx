@@ -1,7 +1,7 @@
-import {InlineMath} from 'react-katex';
+import { InlineMath, BlockMath } from 'react-katex';
 
-function MathText({text}){
-    const parts = text.split(/(\\\(.*?\\\))/g);
+function MathText({ text }) {
+    const parts = text.split(/(\\\(.*?\\\)|\\\[.*?\\\])/g);
 
     return (
         <span>
@@ -9,6 +9,10 @@ function MathText({text}){
           if (part.startsWith("\\(") && part.endsWith("\\)")) {
               const formula = part.slice(2, -2);
               return <InlineMath key={index} math={formula} />;
+          }
+          if (part.startsWith("\\[") && part.endsWith("\\]")) {
+              const formula = part.slice(2, -2);
+              return <BlockMath key={index} math={formula} />;
           }
           return <span key={index}>{part}</span>;
       })}

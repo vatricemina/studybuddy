@@ -48,15 +48,10 @@ function DashboardPage(){
         fetchSubjects();
     }
 
-    function handleLogout(){
-        localStorage.removeItem("token");
-        navigate("/login");
-    }
 
     return (
         <div>
             <h1>Dashboard</h1>
-            <button onClick={handleLogout}>Logout</button>
 
             <ul>
                 {subjects.map((subject)=> (
