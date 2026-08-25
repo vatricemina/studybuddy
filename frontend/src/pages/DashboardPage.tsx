@@ -57,6 +57,7 @@ function DashboardPage(){
                 {subjects.map((subject)=> (
                     <li key={subject.id}>
                         <Link to={`/subjects/${subject.id}/topics`}>{subject.name}</Link>
+                        <Link to={`/subjects/${subject.id}/study-plan`}>Study Plan</Link>
                     </li>
                 ))}
             </ul>

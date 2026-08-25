@@ -15,9 +15,8 @@ import QuizHistoryPage from './pages/QuizHistoryPage';
 import QuizDetailPage from './pages/QuizDetailPage';
 import ChatPage from './pages/ChatPage';
 import Layout from './components/Layout';
-
-
-
+import StudyPlanPage from './pages/StudyPlanPage';
+import StudySessionPage from './pages/StudySessionPage';
 
 function App() {
   return (
@@ -92,6 +91,26 @@ function App() {
                   <ProtectedRoute>
                       <Layout>
                           <ChatPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/subjects/:subjectId/study-plan"
+              element={
+                  <ProtectedRoute>
+                      <Layout>
+                          <StudyPlanPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/topics/:topicId/study-session"
+              element={
+                  <ProtectedRoute>
+                      <Layout>
+                          <StudySessionPage />
                       </Layout>
                   </ProtectedRoute>
               }
