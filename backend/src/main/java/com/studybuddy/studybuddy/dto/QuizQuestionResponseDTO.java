@@ -12,4 +12,5 @@ public class QuizQuestionResponseDTO {
     private String optionC;
     private String optionD;
     private Long quizId;
+    private String userAnswer;
 }

@@ -1,9 +1,6 @@
 package com.studybuddy.studybuddy.service;
 
-import com.studybuddy.studybuddy.dto.QuizQuestionAIItem;
-import com.studybuddy.studybuddy.dto.QuizQuestionResponseDTO;
-import com.studybuddy.studybuddy.dto.QuizRequestDTO;
-import com.studybuddy.studybuddy.dto.QuizResponseDTO;
+import com.studybuddy.studybuddy.dto.*;
 import com.studybuddy.studybuddy.entity.Quiz;
 import com.studybuddy.studybuddy.entity.QuizQuestion;
 import com.studybuddy.studybuddy.entity.Topic;
@@ -118,7 +115,33 @@ public class QuizService {
         dto.setOptionC(quizQuestion.getOptionC());
         dto.setOptionD(quizQuestion.getOptionD());
         dto.setQuizId(quizQuestion.getQuiz().getId());
+        dto.setUserAnswer(quizQuestion.getUserAnswer());
         return dto;
+    }
+
+    public QuizResponseDTO submitQuiz(Long quizId, SubmitQuizRequestDTO requestDTO){
+        Quiz quiz=quizRepository.findById(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found with id " + quizId));
+        checkOwnership(quiz);
+
+        int correctCount=0;
+        List<QuizQuestionResponseDTO> questionDTOs = new ArrayList<>();
+
+        for(SubmitQuizRequestDTO.QuestionAnswerDTO answer: requestDTO.getAnswers()){
+            QuizQuestion question=quizQuestionRepository.findById(answer.getQuestionId())
+                    .orElseThrow(() -> new RuntimeException("Question not found with id " + answer.getQuestionId()));
+            question.setUserAnswer(answer.getUserAnswer());
+            QuizQuestion savedQuestion=quizQuestionRepository.save(question);
+            if(question.getCorrectAnswer().equalsIgnoreCase(answer.getUserAnswer())) correctCount++;
+            questionDTOs.add(toQuestionResponseDTO(savedQuestion));
+        }
+        quiz.setScore(correctCount);
+        Quiz savedQuiz=quizRepository.save(quiz);
+        QuizResponseDTO responseDTO=toResponseDTO(savedQuiz);
+        responseDTO.setQuestions(questionDTOs);
+        return responseDTO;
+
+
     }
 
     private Topic getOwnedTopic(Long topicId){
@@ -157,6 +180,13 @@ public class QuizService {
         dto.setScore(quiz.getScore());
         dto.setTopicId(quiz.getTopic().getId());
         dto.setTopicTitle(quiz.getTopic().getTitle());
+
+        List<QuizQuestionResponseDTO> questionDTOs = quizQuestionRepository.findAll().stream()
+                .filter(q -> q.getQuiz().getId().equals(quiz.getId()))
+                .map(this::toQuestionResponseDTO)
+                .collect(Collectors.toList());
+        dto.setQuestions(questionDTOs);
         return dto;
     }
+
 }

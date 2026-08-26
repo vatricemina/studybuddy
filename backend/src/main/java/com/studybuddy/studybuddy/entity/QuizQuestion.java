@@ -25,6 +25,8 @@ public class QuizQuestion {
     @Column(name = "option_d")
     private String optionD;
 
+    private String userAnswer;
+
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;

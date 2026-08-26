@@ -3,6 +3,7 @@ package com.studybuddy.studybuddy.controller;
 import com.studybuddy.studybuddy.dto.GroqQuizRequest;
 import com.studybuddy.studybuddy.dto.QuizRequestDTO;
 import com.studybuddy.studybuddy.dto.QuizResponseDTO;
+import com.studybuddy.studybuddy.dto.SubmitQuizRequestDTO;
 import com.studybuddy.studybuddy.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,12 @@ public class QuizController {
     public QuizResponseDTO updateQuiz(@PathVariable Long id, @RequestBody QuizRequestDTO requestDTO){
         return quizService.updateQuiz(id, requestDTO);
     }
+
+    @PutMapping("/{id}/submit")
+    public QuizResponseDTO submitQuiz(@PathVariable Long id, @RequestBody SubmitQuizRequestDTO requestDTO){
+        return quizService.submitQuiz(id, requestDTO);
+    }
+
 
     @DeleteMapping("/{id}")
     public void deleteQuiz(@PathVariable Long id){

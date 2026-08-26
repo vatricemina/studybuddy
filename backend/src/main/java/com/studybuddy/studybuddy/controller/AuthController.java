@@ -5,10 +5,12 @@ import com.studybuddy.studybuddy.dto.LoginRequestDTO;
 import com.studybuddy.studybuddy.dto.RegisterRequestDTO;
 import com.studybuddy.studybuddy.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,5 +26,12 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponseDTO login(@RequestBody LoginRequestDTO requestDTO){
         return authService.login(requestDTO);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String,String>> handleException(RuntimeException e){
+        Map<String,String> error=new HashMap<>();
+        error.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 }

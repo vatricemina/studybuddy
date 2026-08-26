@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
     List<StudySession> findByTopicSubjectUserId(Long userId);
-
+    List<StudySession> findByTopicSubjectId(Long subjectId);
 }

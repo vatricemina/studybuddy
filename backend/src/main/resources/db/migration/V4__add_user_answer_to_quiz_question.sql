@@ -1,0 +1,1 @@
+ALTER TABLE quiz_question ADD COLUMN user_answer VARCHAR(1);
