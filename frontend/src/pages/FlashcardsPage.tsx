@@ -54,7 +54,7 @@ function FlashcardsPage(){
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Flashcards</h1>
+                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">Flashcards</h1>
                 <p className="text-slate-500">Generate AI-powered flashcards and test your memory.</p>
             </div>
 

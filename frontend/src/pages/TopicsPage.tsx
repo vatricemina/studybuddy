@@ -7,6 +7,7 @@ function TopicsPage(){
     const [topics, setTopics]=useState([]);
     const [title,setTitle]=useState("");
     const [estimatedHours,setEstimatedHours]=useState("");
+    const [error, setError] = useState("");
 
     async function fetchTopics(){
         const token=localStorage.getItem("token");
@@ -29,6 +30,11 @@ function TopicsPage(){
     async function handleAddTopic(){
         const token=localStorage.getItem("token");
 
+        if (title.trim() === "" || estimatedHours === "") {
+            setError("Please fill in all fields");
+            return;
+        }
+
         await axios.post("http://localhost:8080/api/topics", {
             title:title,
             estimatedHours:Number(estimatedHours),
@@ -45,10 +51,18 @@ function TopicsPage(){
         fetchTopics();
     }
 
+    async function handleDeleteTopic(topicId) {
+        const token = localStorage.getItem("token");
+        await axios.delete(`http://localhost:8080/api/topics/${topicId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchTopics();
+    }
+
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Topics</h1>
+                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">Topics</h1>
                 <p className="text-slate-500">Browse your topics or add a new one to keep studying.</p>
             </div>
 
@@ -57,7 +71,7 @@ function TopicsPage(){
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
                     {topics.map((topic) => (
-                        <div key={topic.id} className="bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md transition">
+                        <div key={topic.id} className="relative bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md transition">
                             <p className="text-lg font-semibold text-slate-800">{topic.title}</p>
                             <p className="text-xs text-slate-400 mt-1">Estimated hours: {topic.estimatedHours}</p>
                             <div className="flex gap-2 mt-3">
@@ -68,6 +82,15 @@ function TopicsPage(){
                                     Quiz
                                 </Link>
                             </div>
+
+                            <button
+                                onClick={() => handleDeleteTopic(topic.id)}
+                                className="absolute bottom-3 right-3 text-slate-300 hover:text-red-400 transition"
+                                title="Delete topic"
+                            >
+                                🗑️
+                            </button>
+
                         </div>
                     ))}
                 </div>
@@ -89,6 +112,9 @@ function TopicsPage(){
                     onChange={(e) => setEstimatedHours(e.target.value)}
                     className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 />
+                {error && (
+                    <p className="text-sm text-red-500 mb-3">{error}</p>
+                )}
                 <button
                     onClick={handleAddTopic}
                     className="w-full bg-indigo-400 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition"

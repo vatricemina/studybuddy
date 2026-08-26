@@ -7,6 +7,8 @@ function DashboardPage(){
     const [name, setName] = useState("");
     const [examDate, setExamDate] = useState("");
     const [difficulty, setDifficulty] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     async function fetchSubjects(){
@@ -17,14 +19,29 @@ function DashboardPage(){
         setSubjects(response.data);
     }
 
-    useEffect(() => { fetchSubjects(); }, []);
+    async function fetchUser(){
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:8080/api/users/me", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        setFirstName(response.data.firstName);
+    }
+
+
+    useEffect(() => { fetchSubjects(); fetchUser(); }, []);
 
     async function handleAddSubject(){
         const today = new Date().toISOString().split("T")[0];
-        if (examDate < today) {
-            alert("Exam date cannot be in the past");
+        if (name.trim() === "" || examDate === "" || difficulty === "") {
+            setError("Please fill in all fields");
             return;
         }
+
+        if (examDate < today) {
+            setError("Exam date cannot be in the past");
+            return;
+        }
+
         const token = localStorage.getItem("token");
         await axios.post("http://localhost:8080/api/subjects", {
             name: name, examDate: examDate, difficulty: Number(difficulty)
@@ -34,12 +51,25 @@ function DashboardPage(){
         fetchSubjects();
     }
 
+    async function handleDeleteSubject(e, subjectId){
+        e.stopPropagation();
+        const token=localStorage.getItem("token");
+        await axios.delete(`http://localhost:8080/api/subjects/${subjectId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchSubjects();
+    }
+
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Welcome back 👋</h1>
-                <p className="text-slate-500">Track your subjects, plan your study sessions, and let AI help you stay ahead.</p>
-                <p className="text-xs text-indigo-400 italic mt-1">
+                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">
+                    Welcome back, {firstName}!
+                </h1>
+                <p className="text-lg text-slate-500">
+                    Track your subjects, plan your study sessions, and let AI help you stay ahead.
+                </p>
+                <p className="textlg italic text-indigo-400 mt-2">
                     "Success is the sum of small efforts, repeated day in and day out."
                 </p>
             </div>
@@ -54,7 +84,7 @@ function DashboardPage(){
                             <div
                                 key={subject.id}
                                 onClick={() => navigate(`/subjects/${subject.id}/topics`)}
-                                className="bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md hover:border-indigo-200 transition cursor-pointer"
+                                className="relative bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md hover:border-indigo-200 transition cursor-pointer"
                             >
                                 <p className="text-lg font-semibold text-slate-800">{subject.name}</p>
                                 <p className="text-xs text-slate-400 mt-1">Exam: {subject.examDate}</p>
@@ -72,6 +102,13 @@ function DashboardPage(){
                                         Statistics
                                     </span>
                                 </div>
+                                <button
+                                    onClick={(e) => handleDeleteSubject(e, subject.id)}
+                                    className="absolute bottom-3 right-3 text-slate-300 hover:text-red-400 transition"
+                                    title="Delete subject"
+                                >
+                                    🗑️
+                                </button>
                             </div>
                         ))}
                     </div>
@@ -108,6 +145,9 @@ function DashboardPage(){
                     <option value="4">4 - Hard</option>
                     <option value="5">5 - Very hard</option>
                 </select>
+                {error && (
+                    <p className="text-sm text-red-500 mb-3">{error}</p>
+                )}
                 <button
                     onClick={handleAddSubject}
                     className="w-full bg-indigo-400 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition"

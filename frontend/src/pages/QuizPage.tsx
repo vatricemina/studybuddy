@@ -70,7 +70,7 @@ function QuizPage(){
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">
+                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">
                     Quiz {quiz ? `on ${quiz.topicTitle}` : ""}
                 </h1>
                 <p className="text-slate-500">Test your knowledge with an AI-generated quiz.</p>

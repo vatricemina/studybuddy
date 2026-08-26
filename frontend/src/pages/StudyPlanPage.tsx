@@ -49,7 +49,7 @@ function StudyPlanPage() {
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Study Plan</h1>
+                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">Study Plan</h1>
                 <p className="text-slate-500">Let AI build a study schedule tailored to your exam date.</p>
             </div>
 

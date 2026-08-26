@@ -32,7 +32,7 @@ function QuizHistoryPage(){
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">Quiz History</h1>
+                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">Quiz History</h1>
                 <p className="text-slate-500">Review your past quizzes and scores.</p>
             </div>
 
