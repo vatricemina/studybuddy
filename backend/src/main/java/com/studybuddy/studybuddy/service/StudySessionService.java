@@ -3,9 +3,11 @@ package com.studybuddy.studybuddy.service;
 import com.studybuddy.studybuddy.dto.StudySessionRequestDTO;
 import com.studybuddy.studybuddy.dto.StudySessionResponseDTO;
 import com.studybuddy.studybuddy.entity.StudySession;
+import com.studybuddy.studybuddy.entity.Subject;
 import com.studybuddy.studybuddy.entity.Topic;
 import com.studybuddy.studybuddy.entity.User;
 import com.studybuddy.studybuddy.repository.StudySessionRepository;
+import com.studybuddy.studybuddy.repository.SubjectRepository;
 import com.studybuddy.studybuddy.repository.TopicRepository;
 import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,20 @@ public class StudySessionService {
     @Autowired
     private CurrentUserService currentUserService;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
     public List<StudySessionResponseDTO> getAllStudySessions(){
         User currentUser=currentUserService.getCurrentUser();
         return studySessionRepository.findByTopicSubjectUserId(currentUser.getId())
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<StudySessionResponseDTO> getBySubject(Long subjectId) {
+        getOwnedSubject(subjectId);
+        return studySessionRepository.findByTopicSubjectId(subjectId)
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
@@ -75,6 +88,17 @@ public class StudySessionService {
             throw new RuntimeException("You are not allowed to modify this study session");
         }
         return topic;
+    }
+
+    private Subject getOwnedSubject(Long subjectId){
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new RuntimeException("Subject not found with id " + subjectId));
+
+        User currentUser = currentUserService.getCurrentUser();
+        if (!subject.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You don't own this subject");
+        }
+        return subject;
     }
 
     private void checkOwnership(StudySession studySession){

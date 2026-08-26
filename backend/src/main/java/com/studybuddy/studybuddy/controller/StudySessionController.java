@@ -20,6 +20,11 @@ public class StudySessionController {
         return studySessionService.getAllStudySessions();
     }
 
+    @GetMapping("/subject/{subjectId}")
+    public List<StudySessionResponseDTO> getBySubject(@PathVariable Long subjectId) {
+        return studySessionService.getBySubject(subjectId);
+    }
+
     @PostMapping
     public StudySessionResponseDTO createStudySession(@RequestBody StudySessionRequestDTO requestDTO){
         return studySessionService.createStudySession(requestDTO);
