@@ -9,14 +9,21 @@ function StudySessionEnd({cyclesCompleted, totalSecondsElapsed, status}){
         navigate("/dashboard");
     }
 
-    return(
-        <div>
-            <h1>Good job!</h1>
-            <h2>You studied for {totalSecondsElapsed} minutes with {cyclesCompleted} completed study-break cycles.</h2>
-            <p>Study session status: {status}</p>
-            <button onClick={handleButton}>Back to dashboard</button>
+    return (
+        <div className="text-center max-w-md mx-auto">
+            <h1 className="text-3xl font-bold text-slate-800 mb-4">Good job! 🎉</h1>
+            <p className="text-slate-600 mb-1">
+                You studied for {totalSecondsElapsed} minutes with {cyclesCompleted} completed cycles.
+            </p>
+            <p className="text-sm text-slate-400 mb-6">Status: {status}</p>
+            <button
+                onClick={handleButton}
+                className="bg-indigo-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition"
+            >
+                Back to dashboard
+            </button>
         </div>
-    )
+    );
 }
 
 export default StudySessionEnd;

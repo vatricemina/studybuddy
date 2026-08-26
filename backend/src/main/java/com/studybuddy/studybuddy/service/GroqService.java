@@ -96,8 +96,9 @@ public class GroqService {
     public String chat(String topicTitle, List<ChatMessageDTO> messageHistory) throws Exception{
         List<GroqRequest.Message> messages=new ArrayList<>();
 
-        String systemPrompt="Ti si AI pomoćnik za učenje. Trenutna tema koju korisnik uči je: "+topicTitle+". Odgovaraj kratko, jasno, i na bosanskom jeziku."+
-                "Za matematičke formule, KORISTI ISKLJUČIVO $ formula $ za inline matematiku, i $$ formula $$ za izdvojene formule, NIKAD \\( \\) ili \\[ \\].";
+        String systemPrompt = topicTitle != null
+                ? "Ti si AI pomoćnik za učenje. Trenutna tema: " + topicTitle + ". Odgovaraj kratko, jasno, i na bosanskom jeziku."
+                : "Ti si AI pomoćnik za učenje. Odgovaraj kratko, jasno, i na bosanskom jeziku.";
         messages.add(new GroqRequest.Message("system", systemPrompt));
 
         for(ChatMessageDTO msg:messageHistory){

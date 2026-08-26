@@ -48,37 +48,45 @@ function ChatPage(){
 
     return (
         <div>
-            <h1>Chat</h1>
-            <div style={{ border: "1px solid black", height: "400px", overflowY: "auto", padding: "10px" }}>
-                {messages.map((message,index)=>(
-                    <div key={index} style={{
-                        textAlign: message.role === "user" ? "right" : "left",
-                        margin: "10px 0"
-                    }}>
-                        <span style={{
-                            backgroundColor: message.role === "user" ? "lightblue" : "lightgray",
-                            padding: "8px 12px",
-                            borderRadius: "10px",
-                            display: "inline-block"
-                        }}>
-                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-                                {message.content}
-                            </ReactMarkdown>
-                        </span>
-                    </div>
-                ))}
-                {loading && <p>AI is typing...</p>}
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Chat</h1>
+                <p className="text-slate-500">Ask your AI study buddy anything about this topic.</p>
             </div>
 
-            <input
-                type="text"
-                value={inputText}
-                onChange={(e)=>setInputText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type your question..."
-                style={{ width: "80%" }}
-            />
-            <button onClick={handleSend} disabled={loading}>Send</button>
+            <div className="bg-white/80 border border-indigo-100 rounded-2xl shadow-sm h-96 overflow-y-auto p-4 mb-4">
+                {messages.map((message, index) => (
+                    <div key={index} className={`my-2 flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <span className={`px-4 py-2 rounded-2xl text-sm max-w-[75%] ${
+                        message.role === "user"
+                            ? "bg-indigo-400 text-white"
+                            : "bg-slate-100 text-slate-700"
+                    }`}>
+                        <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                            {message.content}
+                        </ReactMarkdown>
+                    </span>
+                    </div>
+                ))}
+                {loading && <p className="text-slate-400 text-sm">AI is typing...</p>}
+            </div>
+
+            <div className="flex gap-2">
+                <input
+                    type="text"
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Type your question..."
+                    className="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                />
+                <button
+                    onClick={handleSend}
+                    disabled={loading}
+                    className="bg-indigo-400 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition disabled:opacity-50"
+                >
+                    Send
+                </button>
+            </div>
         </div>
     );
 }

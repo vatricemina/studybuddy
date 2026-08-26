@@ -6,6 +6,7 @@ function StudyPlanPage() {
     const {subjectId}=useParams();
     const [plan, setPlan]=useState([]);
     const [loading, setLoading]=useState(false);
+    const [error, setError] = useState("");
 
     async function fetchPlan(){
         const token=localStorage.getItem("token");
@@ -34,23 +35,48 @@ function StudyPlanPage() {
             });
             setPlan(response.data);
         }catch(error){
-            console.log("Error generating study plan: ", error);
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
         }finally{
             setLoading(false);
         }
 
     }
 
-    return(
+    return (
         <div>
-            <h1>Study plan</h1>
-            <button onClick={handleGenerate} disabled={loading}>{loading ? "Generating...":"Generate New Plan"}</button>
-            <div>
-                {plan.map((entry)=>(
-                    <div key={entry.id} style={{ border: "1px solid black", padding: "10px", margin: "10px" }}>
-                        <p><strong>{entry.plannedDate}</strong> - {entry.topicTitle} ({entry.plannedHours}h-)</p>
-                        <p>{entry.focus}</p>
-                        <Link to={`/topics/${entry.topicId}/study-session`}>Start study session</Link>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Study Plan</h1>
+                <p className="text-slate-500">Let AI build a study schedule tailored to your exam date.</p>
+            </div>
+
+            <button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="bg-indigo-400 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition disabled:opacity-50 mb-6"
+            >
+                {loading ? "Generating..." : "Generate New Plan"}
+            </button>
+            {error && (
+                <p className="text-sm text-red-500 mb-4">{error}</p>
+            )}
+
+            <div className="space-y-4">
+                {plan.map((entry) => (
+                    <div key={entry.id} className="bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100">
+                        <p className="font-semibold text-slate-800">
+                            {entry.plannedDate} — {entry.topicTitle} ({entry.plannedHours}h)
+                        </p>
+                        <p className="text-sm text-slate-500 mt-1">{entry.focus}</p>
+                        <Link
+                            to={`/topics/${entry.topicId}/study-session`}
+                            className="inline-block mt-3 text-sm text-rose-400 font-medium hover:underline"
+                        >
+                            Start Session →
+                        </Link>
                     </div>
                 ))}
             </div>

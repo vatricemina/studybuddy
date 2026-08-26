@@ -8,15 +8,11 @@ function FlashcardCard({question, answer}){
     }
 
     return (
-        <div onClick={handleClick} style={{
-            border: "1px solid black",
-            padding: "20px",
-            margin: "10px",
-            cursor: "pointer",
-            width: "300px"
-        }}>
-            {isFlipped ? <o>{answer}</o> : <p>{question}</p>}
-
+        <div
+            onClick={handleClick}
+            className="bg-white/80 border border-indigo-100 rounded-2xl shadow-sm p-6 w-64 cursor-pointer hover:shadow-md transition flex items-center justify-center text-center min-h-[140px]"
+        >
+            <p className="text-slate-700">{isFlipped ? answer : question}</p>
         </div>
     );
 }

@@ -69,28 +69,57 @@ function QuizPage(){
 
     return (
         <div>
-            <h1>Quiz {quiz ? `on topic ${quiz.topicTitle}` : ""}</h1>
-            <button onClick={handleGenerate} disabled={loading}>{loading ? "Generating...":"Generate new quiz"}</button>
-            <button onClick={goToHistory}>Previously generated quizzes</button>
-            <div>
-                {quiz && quiz.questions.map((question)=> (
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">
+                    Quiz {quiz ? `on ${quiz.topicTitle}` : ""}
+                </h1>
+                <p className="text-slate-500">Test your knowledge with an AI-generated quiz.</p>
+            </div>
+
+            <div className="flex gap-3 mb-8">
+                <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="bg-indigo-400 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition disabled:opacity-50"
+                >
+                    {loading ? "Generating..." : "Generate new quiz"}
+                </button>
+                <button
+                    onClick={goToHistory}
+                    className="bg-white text-indigo-500 border border-indigo-200 px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-50 transition"
+                >
+                    Previously generated quizzes
+                </button>
+            </div>
+
+            <div className="space-y-4">
+                {quiz && quiz.questions.map((question) => (
                     <QuizQuestionCard
                         key={question.id}
-                        question={question} //cijeli objekt pitanja = questionText+optionABCD+correctAnswer+id
-                        onSelect={handleAnswerSelect} //funkciju koju dijete poziva kad klikne
-                        selectedAnswer={answers[question.id]} //sta je trenutno izabrano za bas ovo pitanje
-                        showResults={showResults} //jel predat kviz
+                        question={question}
+                        onSelect={handleAnswerSelect}
+                        selectedAnswer={answers[question.id]}
+                        showResults={showResults}
                     />
                 ))}
             </div>
+
             {quiz && !showResults && (
-                <button onClick={handleSubmit}>Submit quiz</button>
+                <button
+                    onClick={handleSubmit}
+                    className="mt-6 bg-rose-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-500 transition"
+                >
+                    Submit Quiz
+                </button>
             )}
+
             {showResults && (
-                <h2>Score: {quiz.score} / {quiz.questions.length}</h2>
+                <h2 className="mt-6 text-xl font-semibold text-slate-700">
+                    Score: {quiz.score} / {quiz.questions.length}
+                </h2>
             )}
         </div>
-    )
+    );
 }
 
 export default QuizPage;

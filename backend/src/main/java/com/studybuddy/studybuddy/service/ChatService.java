@@ -21,9 +21,13 @@ public class ChatService {
     @Autowired
     private TopicRepository topicRepository;
 
-    public String chat(Long topicId, List<ChatMessageDTO> messages) throws Exception{
-        Topic topic=getOwnedTopic(topicId);
-        return groqService.chat(topic.getTitle(), messages);
+    public String chat(Long topicId, List<ChatMessageDTO> messages) throws Exception {
+        String topicTitle = null;
+        if (topicId != null) {
+            Topic topic = getOwnedTopic(topicId);
+            topicTitle = topic.getTitle();
+        }
+        return groqService.chat(topicTitle, messages);
     }
 
     private Topic getOwnedTopic(Long topicId){

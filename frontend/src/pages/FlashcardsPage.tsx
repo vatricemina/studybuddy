@@ -7,6 +7,7 @@ function FlashcardsPage(){
     const {topicId}=useParams();
     const [flashcards, setFlashcards]=useState([]);
     const [loading, setLoading]=useState(false);
+    const [error, setError] = useState("");
 
     async function fetchExistingFlashcards(){
         const token=localStorage.getItem("token");
@@ -40,7 +41,11 @@ function FlashcardsPage(){
 
             setFlashcards(response.data);
         }catch(error){
-            console.log("Error generating flashcards:", error);
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
         }finally{
             setLoading(false);
         }
@@ -48,17 +53,28 @@ function FlashcardsPage(){
 
     return (
         <div>
-            <h1>Flashcards</h1>
-            <button onClick={handleGenerate} disabled={loading}> {loading ? "Generating..." : "Generate Flashcards"}</button>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Flashcards</h1>
+                <p className="text-slate-500">Generate AI-powered flashcards and test your memory.</p>
+            </div>
 
-            <div style={{display:"flex", flexWrap:"wrap"}}>
-                {flashcards.map((card)=>(
-                    <FlashcardCard key={card.id} question={card.question} answer={card.answer}/>
+            <button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="bg-indigo-400 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition disabled:opacity-50 mb-6"
+            >
+                {loading ? "Generating..." : "Generate Flashcards"}
+            </button>
+            {error && (
+                <p className="text-sm text-red-500 mb-4">{error}</p>
+            )}
+
+            <div className="flex flex-wrap gap-4">
+                {flashcards.map((card) => (
+                    <FlashcardCard key={card.id} question={card.question} answer={card.answer} />
                 ))}
             </div>
         </div>
-
-
-    )
+    );
 }
 export default FlashcardsPage;

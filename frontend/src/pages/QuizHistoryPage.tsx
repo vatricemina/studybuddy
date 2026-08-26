@@ -31,14 +31,22 @@ function QuizHistoryPage(){
 
     return (
         <div>
-            <h1>Quiz history</h1>
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {quizzes.map((quiz)=>(
-                    <Link key={quiz.id} to={`/quizzes/${quiz.id}`} style={{ textDecoration: "none", color: "black" }}>
-                        <div style={{ border: "1px solid black", padding: "15px", margin: "10px", width: "200px" }}>
-                            <p>Generated: {formatDate(quiz.generatedAt)}</p>
-                            <p>Score: {quiz.score!=null ? quiz.score : "Not submitted"}</p>
-                        </div>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Quiz History</h1>
+                <p className="text-slate-500">Review your past quizzes and scores.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {quizzes.map((quiz) => (
+                    <Link
+                        key={quiz.id}
+                        to={`/quizzes/${quiz.id}`}
+                        className="block bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md transition"
+                    >
+                        <p className="text-sm text-slate-500">{formatDate(quiz.generatedAt)}</p>
+                        <p className="text-lg font-semibold text-slate-800 mt-1">
+                            Score: {quiz.score !== null ? quiz.score : "Not submitted"}
+                        </p>
                     </Link>
                 ))}
             </div>

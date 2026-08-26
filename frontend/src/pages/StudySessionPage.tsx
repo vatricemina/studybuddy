@@ -45,7 +45,7 @@ function StudySessionPage() {
        return ()=>{ //cleanup-kad korisnik napusti stranici, ili se useeffect ponovo pokrene jer se u nizu nesto promijenilo, pozove se ova fja
            clearInterval(intervalId); //zaustavlja stari interval
        };
-   }, [sessionStarted]);
+   }, [sessionStarted, isBreak]);
 
 
 
@@ -111,45 +111,65 @@ function StudySessionPage() {
         />);
     }
 
-    if(!sessionStarted){
-        return(
+    if (!sessionStarted) {
+        return (
             <div>
-                <h1>Study Session</h1>
-                <label>Study interval (min): </label>
-                <input type="number" value={studyMinutes} onChange={(e)=>setStudyMinutes(e.target.value)}/>
-                <br/>
-                <label>Break interval (min): </label>
-                <input type="number" value={breakMinutes} onChange={(e)=>setBreakMinutes(e.target.value)}/>
-                <br/>
-                <label>Planned minutes (min): </label>
-                <input type="number" value={plannedMinutes} onChange={(e)=>setPlannedMinutes(e.target.value)}/>
-                <br/>
-                <button onClick={handleStart}>Start</button>
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-slate-800 mb-2">Study Session</h1>
+                    <p className="text-slate-500">Set your intervals and start a focused study session.</p>
+                </div>
+
+                <div className="bg-white/80 p-6 rounded-2xl shadow-sm border border-indigo-100 max-w-md">
+                    <label className="block text-sm text-slate-600 mb-1">Study interval (min)</label>
+                    <input
+                        type="number"
+                        value={studyMinutes}
+                        onChange={(e) => setStudyMinutes(Number(e.target.value))}
+                        className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    />
+                    <label className="block text-sm text-slate-600 mb-1">Break interval (min)</label>
+                    <input
+                        type="number"
+                        value={breakMinutes}
+                        onChange={(e) => setBreakMinutes(Number(e.target.value))}
+                        className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    />
+                    <label className="block text-sm text-slate-600 mb-1">Planned total (min)</label>
+                    <input
+                        type="number"
+                        value={plannedMinutes}
+                        onChange={(e) => setPlannedMinutes(Number(e.target.value))}
+                        className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    />
+                    <button
+                        onClick={handleStart}
+                        className="w-full bg-indigo-400 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition"
+                    >
+                        Start
+                    </button>
+                </div>
             </div>
         );
     }
 
-    return(
-        <div>
-            <h1> {isBreak?"Break":"Study"} Time</h1>
-            <div style={{
-                width: "200px",
-                height: "200px",
-                borderRadius: "50%",
-                border: "5px solid black",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "32px",
-                margin: "20px auto"
-            }}>
-                {formatTime(secondsLeft)}
+    return (
+        <div className="text-center">
+            <h1 className="text-2xl font-bold text-slate-800 mb-6">{isBreak ? "Break" : "Study"} Time</h1>
 
+            <div className={`w-52 h-52 rounded-full border-8 mx-auto flex items-center justify-center text-4xl font-semibold ${
+                isBreak ? "border-rose-300 text-rose-500" : "border-indigo-300 text-indigo-500"
+            }`}>
+                {formatTime(secondsLeft)}
             </div>
-            <p>Cycles completed: {cyclesCompleted}</p>
-            <div style={{ textAlign: "right" }}>
-                <button onClick={handleEnd}>End Session</button>
-            </div>
+
+            <p className="text-slate-500 mt-6">Cycles completed: {cyclesCompleted}</p>
+
+            <button
+                onClick={handleEnd}
+                className="mt-6 bg-rose-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-500 transition"
+            >
+                End Session
+            </button>
         </div>
     );
 
