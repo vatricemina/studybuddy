@@ -3,13 +3,8 @@ package com.studybuddy.studybuddy.service;
 import com.studybuddy.studybuddy.dto.SubjectRequestDTO;
 import com.studybuddy.studybuddy.dto.SubjectResponseDTO;
 import com.studybuddy.studybuddy.dto.SubjectStatsDTO;
-import com.studybuddy.studybuddy.entity.Quiz;
-import com.studybuddy.studybuddy.entity.StudySession;
-import com.studybuddy.studybuddy.entity.Subject;
-import com.studybuddy.studybuddy.entity.User;
-import com.studybuddy.studybuddy.repository.QuizRepository;
-import com.studybuddy.studybuddy.repository.StudySessionRepository;
-import com.studybuddy.studybuddy.repository.SubjectRepository;
+import com.studybuddy.studybuddy.entity.*;
+import com.studybuddy.studybuddy.repository.*;
 import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +26,19 @@ public class SubjectService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @Autowired
+    private FlashcardRepository flashcardRepository;
+
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
+    private StudyPlanEntryRepository studyPlanEntryRepository;
 
     public List<SubjectResponseDTO> getAllSubjects(){
         User currentUser=currentUserService.getCurrentUser();
@@ -67,15 +75,24 @@ public class SubjectService {
     }
 
     public void deleteSubject(Long id){
-        Subject subject=subjectRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Subject not found with id " + id));
+        Subject subject = getOwnedSubject(id);
 
-        User currentUser=currentUserService.getCurrentUser();
-        if(!subject.getUser().getId().equals(currentUser.getId())){
-            throw new RuntimeException("You are not allowed to delete this subject");
+        List<Topic> topics = topicRepository.findBySubjectId(id);
+        for (Topic topic : topics) {
+            List<Quiz> quizzes = quizRepository.findByTopicId(topic.getId());
+            for (Quiz quiz : quizzes) {
+                List<QuizQuestion> questions = quizQuestionRepository.findByQuizId(quiz.getId());
+                quizQuestionRepository.deleteAll(questions);
+            }
+            quizRepository.deleteAll(quizzes);
+
+            flashcardRepository.deleteAll(flashcardRepository.findByTopicId(topic.getId()));
+            studySessionRepository.deleteAll(studySessionRepository.findByTopicId(topic.getId()));
+            studyPlanEntryRepository.deleteAll(studyPlanEntryRepository.findByTopicId(topic.getId()));
         }
-
+        topicRepository.deleteAll(topics);
         subjectRepository.deleteById(id);
+
     }
 
     public SubjectStatsDTO getSubjectStats(Long subjectId) {

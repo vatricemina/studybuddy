@@ -8,4 +8,6 @@ import java.util.List;
 public interface StudyPlanEntryRepository extends JpaRepository<StudyPlanEntry, Long> {
     List<StudyPlanEntry> findByTopicSubjectUserId(Long userId);
     List<StudyPlanEntry> findByTopicSubjectId(Long subjectId);
+    List<StudyPlanEntry> findByTopicId(Long topicId);
+
 }

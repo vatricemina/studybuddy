@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface FlashcardRepository extends JpaRepository<Flashcard, Long> {
     List<Flashcard> findByTopicSubjectUserId(Long userId);
+    List<Flashcard> findByTopicId(Long topicId);
 
 }
