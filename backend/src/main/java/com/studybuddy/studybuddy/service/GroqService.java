@@ -168,6 +168,9 @@ public class GroqService {
                 .replaceAll("(?s)```", "")
                 .trim();
 
-        return objectMapper.readValue(response, new TypeReference<List<StudyPlanAIItem>>() {});
-    }
+        try {
+            return objectMapper.readValue(response, new TypeReference<List<StudyPlanAIItem>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate a valid study plan. Please try again.");
+        }    }
 }

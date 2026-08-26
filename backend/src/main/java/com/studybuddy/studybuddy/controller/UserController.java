@@ -15,6 +15,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/me")
+    public UserResponseDTO getCurrentUserInfo() {
+        return userService.getCurrentUserInfo();
+    }
+
     @GetMapping
     public List<UserResponseDTO> getAllUsers(){
         return userService.getAllUsers();

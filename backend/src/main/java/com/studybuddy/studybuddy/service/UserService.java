@@ -4,6 +4,7 @@ import com.studybuddy.studybuddy.dto.UserRequestDTO;
 import com.studybuddy.studybuddy.dto.UserResponseDTO;
 import com.studybuddy.studybuddy.entity.User;
 import com.studybuddy.studybuddy.repository.UserRepository;
+import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,19 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     public List<UserResponseDTO> getAllUsers(){
         return userRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public UserResponseDTO getCurrentUserInfo() {
+        User user = currentUserService.getCurrentUser();
+        return toResponseDTO(user);
     }
 
     public UserResponseDTO updateUser(Long id, UserRequestDTO requestDTO){
