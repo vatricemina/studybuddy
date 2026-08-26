@@ -39,6 +39,9 @@ function DashboardPage(){
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-slate-800 mb-2">Welcome back 👋</h1>
                 <p className="text-slate-500">Track your subjects, plan your study sessions, and let AI help you stay ahead.</p>
+                <p className="text-xs text-indigo-400 italic mt-1">
+                    "Success is the sum of small efforts, repeated day in and day out."
+                </p>
             </div>
 
             <div className="mb-10">

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StudySessionEnd from './StudySessionEnd';
+import ChatBox from '../components/ChatBox';
+
 
 function StudySessionPage() {
     const{topicId}=useParams();
@@ -105,8 +107,9 @@ function StudySessionPage() {
 
     if(sessionEnded){
         return (<StudySessionEnd
+            plannedMinutes={plannedMinutes}
             cyclesCompleted={cyclesCompleted}
-            totalSecondsElapsed={Math.floor(totalSecondsElapsed/60)}
+            totalSecondsElapsed={Math.floor(totalSecondsElapsed / 60)}
             status={sessionStatus}
         />);
     }
@@ -153,23 +156,29 @@ function StudySessionPage() {
     }
 
     return (
-        <div className="text-center">
-            <h1 className="text-2xl font-bold text-slate-800 mb-6">{isBreak ? "Break" : "Study"} Time</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-100px)]">
+            <div className="text-center flex flex-col justify-center">
+                <h1 className="text-2xl font-bold text-slate-800 mb-6">{isBreak ? "Break" : "Study"} Time</h1>
 
-            <div className={`w-52 h-52 rounded-full border-8 mx-auto flex items-center justify-center text-4xl font-semibold ${
-                isBreak ? "border-rose-300 text-rose-500" : "border-indigo-300 text-indigo-500"
-            }`}>
-                {formatTime(secondsLeft)}
+                <div className={`w-52 h-52 rounded-full border-8 mx-auto flex items-center justify-center text-4xl font-semibold ${
+                    isBreak ? "border-rose-300 text-rose-500" : "border-indigo-300 text-indigo-500"
+                }`}>
+                    {formatTime(secondsLeft)}
+                </div>
+
+                <p className="text-slate-500 mt-6">Cycles completed: {cyclesCompleted}</p>
+
+                <button
+                    onClick={handleEnd}
+                    className="mt-6 bg-rose-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-500 transition mx-auto"
+                >
+                    End Session
+                </button>
             </div>
 
-            <p className="text-slate-500 mt-6">Cycles completed: {cyclesCompleted}</p>
-
-            <button
-                onClick={handleEnd}
-                className="mt-6 bg-rose-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-500 transition"
-            >
-                End Session
-            </button>
+            <div className="h-full overflow-hidden">
+                <ChatBox />
+            </div>
         </div>
     );
 

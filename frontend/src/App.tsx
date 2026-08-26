@@ -17,6 +17,9 @@ import ChatPage from './pages/ChatPage';
 import Layout from './components/Layout';
 import StudyPlanPage from './pages/StudyPlanPage';
 import StudySessionPage from './pages/StudySessionPage';
+import StatisticsPage from './pages/StatisticsPage';
+
+
 
 function App() {
   return (
@@ -111,6 +114,26 @@ function App() {
                   <ProtectedRoute>
                       <Layout>
                           <StudySessionPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/chat"
+              element={
+                  <ProtectedRoute>
+                      <Layout>
+                          <ChatPage />
+                      </Layout>
+                  </ProtectedRoute>
+              }
+          />
+          <Route
+              path="/subjects/:subjectId/statistics"
+              element={
+                  <ProtectedRoute>
+                      <Layout>
+                          <StatisticsPage />
                       </Layout>
                   </ProtectedRoute>
               }

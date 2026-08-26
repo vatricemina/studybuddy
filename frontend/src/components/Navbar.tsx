@@ -13,12 +13,17 @@ function Navbar() {
             <Link to="/dashboard" className="text-indigo-500 text-lg font-bold tracking-tight">
                 StudyBuddy
             </Link>
-            <button
-                onClick={handleLogout}
-                className="text-sm text-slate-500 hover:text-indigo-500 font-medium transition"
-            >
-                Logout
-            </button>
+            <div className="flex items-center gap-6">
+                <Link to="/chat" className="text-sm text-slate-500 hover:text-indigo-500 font-medium transition">
+                    AI Chat
+                </Link>
+                <button
+                    onClick={handleLogout}
+                    className="text-sm text-slate-500 hover:text-indigo-500 font-medium transition"
+                >
+                    Logout
+                </button>
+            </div>
         </nav>
     );
 }

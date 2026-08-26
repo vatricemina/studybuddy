@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function StudySessionEnd({cyclesCompleted, totalSecondsElapsed, status}){
-    const navigate=useNavigate();
+function StudySessionEnd({ plannedMinutes, totalSecondsElapsed, cyclesCompleted, status }) {
+    const navigate = useNavigate();
 
-    function handleButton(){
+    function handleButton() {
         navigate("/dashboard");
     }
 
@@ -13,7 +11,7 @@ function StudySessionEnd({cyclesCompleted, totalSecondsElapsed, status}){
         <div className="text-center max-w-md mx-auto">
             <h1 className="text-3xl font-bold text-slate-800 mb-4">Good job! 🎉</h1>
             <p className="text-slate-600 mb-1">
-                You studied for {totalSecondsElapsed} minutes with {cyclesCompleted} completed cycles.
+                You planned on studying for {plannedMinutes} minutes and spent a total of {totalSecondsElapsed} minutes studying with {cyclesCompleted} completed cycles.
             </p>
             <p className="text-sm text-slate-400 mb-6">Status: {status}</p>
             <button

@@ -60,10 +60,13 @@ function TopicsPage(){
                         <div key={topic.id} className="bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md transition">
                             <p className="text-lg font-semibold text-slate-800">{topic.title}</p>
                             <p className="text-xs text-slate-400 mt-1">Estimated hours: {topic.estimatedHours}</p>
-                            <div className="flex flex-col gap-1 mt-3 text-sm">
-                                <Link to={`/topics/${topic.id}/flashcards`} className="text-indigo-500 font-medium hover:underline">Flashcards</Link>
-                                <Link to={`/topics/${topic.id}/quiz`} className="text-rose-400 font-medium hover:underline">Quiz</Link>
-                                <Link to={`/topics/${topic.id}/chat`} className="text-purple-400 font-medium hover:underline">Chat</Link>
+                            <div className="flex gap-2 mt-3">
+                                <Link to={`/topics/${topic.id}/flashcards`} className="bg-indigo-100 text-indigo-600 text-xs font-medium px-3 py-1.5 rounded-full hover:bg-indigo-200 transition">
+                                    Flashcards
+                                </Link>
+                                <Link to={`/topics/${topic.id}/quiz`} className="bg-rose-100 text-rose-600 text-xs font-medium px-3 py-1.5 rounded-full hover:bg-rose-200 transition">
+                                    Quiz
+                                </Link>
                             </div>
                         </div>
                     ))}
