@@ -2,11 +2,8 @@ package com.studybuddy.studybuddy.service;
 
 import com.studybuddy.studybuddy.dto.TopicRequestDTO;
 import com.studybuddy.studybuddy.dto.TopicResponseDTO;
-import com.studybuddy.studybuddy.entity.Subject;
-import com.studybuddy.studybuddy.entity.Topic;
-import com.studybuddy.studybuddy.entity.User;
-import com.studybuddy.studybuddy.repository.SubjectRepository;
-import com.studybuddy.studybuddy.repository.TopicRepository;
+import com.studybuddy.studybuddy.entity.*;
+import com.studybuddy.studybuddy.repository.*;
 import com.studybuddy.studybuddy.security.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +22,21 @@ public class TopicService {
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private FlashcardRepository flashcardRepository;
+
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
+    private StudySessionRepository studySessionRepository;
+
+    @Autowired
+    private StudyPlanEntryRepository studyPlanEntryRepository;
 
     public List<TopicResponseDTO> getAllTopics(){
         User currentUser=currentUserService.getCurrentUser();
@@ -57,14 +69,33 @@ public class TopicService {
     }
 
     public void deleteTopic(Long id){
-        Topic topic=topicRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Topic not found with id " + id));
-        checkOwnership(topic);
+        Topic topic = getOwnedTopic(id);
+        List<Quiz> quizzes = quizRepository.findByTopicId(id);
+        for (Quiz quiz : quizzes) {
+            List<QuizQuestion> questions = quizQuestionRepository.findByQuizId(quiz.getId());
+            quizQuestionRepository.deleteAll(questions);
+        }
+        quizRepository.deleteAll(quizzes);
+        flashcardRepository.deleteAll(flashcardRepository.findByTopicId(id));
+        studySessionRepository.deleteAll(studySessionRepository.findByTopicId(id));
+        studyPlanEntryRepository.deleteAll(studyPlanEntryRepository.findByTopicId(id));
         topicRepository.deleteById(id);
+
     }
 
 
     //pomocne metode
+    private Topic getOwnedTopic(Long topicId){
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new RuntimeException("Topic not found with id " + topicId));
+
+        User currentUser = currentUserService.getCurrentUser();
+        if (!topic.getSubject().getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You don't own this topic");
+        }
+        return topic;
+    }
+
     private TopicResponseDTO toResponseDTO(Topic topic){
         TopicResponseDTO dto=new TopicResponseDTO();
         dto.setId(topic.getId());
