@@ -43,13 +43,13 @@ public class GroqService {
 
     public List<FlashcardAIItem> generateFlashcards(String topicTitle){
         String prompt = """
-        Generiši tačno 5 flashcards (pitanje-odgovor parova) za temu "%s".
-        Odgovori validnim JSON nizom, bez ikakvog dodatnog teksta prije ili poslije, u tačno ovom formatu:
-        [
-          {"question": "pitanje ovdje", "answer": "odgovor ovdje"},
-          {"question": "pitanje ovdje", "answer": "odgovor ovdje"}
-        ]
-        """.formatted(topicTitle);
+    Generate exactly 5 flashcards (question-answer pairs) for the topic "%s".
+    Respond with a valid JSON array, without any additional text before or after, in exactly this format:
+    [
+      {"question": "question here", "answer": "answer here"},
+      {"question": "question here", "answer": "answer here"}
+    ]
+    """.formatted(topicTitle);
 
         String responseV1=generateContent(prompt);
 
@@ -63,25 +63,25 @@ public class GroqService {
 
     public List<QuizQuestionAIItem> generateQuizQuestions(String topicTitle) throws Exception{
         String prompt = """
-        Generiši tačno 5 pitanja sa po 4 ponuđena odgovora (multiple choice) za temu "%s".
-        
-        VAŽNO PRAVILO za polje "correctAnswer": ono MORA sadržavati SAMO jedno od sledeća četiri slova: "A", "B", "C" ili "D" -ništa drugo, nikad puni tekst odgovora, uvijek tačno jedno veliko slovo koje odgovara tačnoj opciji.
-        
-        Primjer ispravnog odgovora: "correctAnswer": "C"
-        Primjer POGREŠNOG odgovora: "correctAnswer": "Integral funkcije" (ovo NIKAD ne radi ovako)
-        
-        Odgovori ISKLJUČIVO validnim JSON nizom, bez ikakvog dodatnog teksta prije ili poslije, u tačno ovom formatu:
-        [
-          {
-            "questionText": "tekst pitanja ovdje",
-            "optionA": "prva opcija",
-            "optionB": "druga opcija",
-            "optionC": "treca opcija",
-            "optionD": "cetvrta opcija",
-            "correctAnswer": "A"
-          }
-        ]
-        """.formatted(topicTitle);
+    Generate exactly 5 multiple choice questions, each with 4 answer options, for the topic "%s".
+
+    IMPORTANT RULE for the "correctAnswer" field: it MUST contain ONLY one of the following four letters: "A", "B", "C", or "D" - nothing else, never the full text of the answer, always exactly one capital letter matching the correct option.
+
+    Example of a correct answer: "correctAnswer": "C"
+    Example of a WRONG answer: "correctAnswer": "Integral of the function" (this NEVER works this way)
+
+    Respond ONLY with a valid JSON array, without any additional text before or after, in exactly this format:
+    [
+      {
+        "questionText": "question text here",
+        "optionA": "first option",
+        "optionB": "second option",
+        "optionC": "third option",
+        "optionD": "fourth option",
+        "correctAnswer": "A"
+      }
+    ]
+    """.formatted(topicTitle);
 
         String responseV1=generateContent(prompt);
 
@@ -97,8 +97,8 @@ public class GroqService {
         List<GroqRequest.Message> messages=new ArrayList<>();
 
         String systemPrompt = topicTitle != null
-                ? "Ti si AI pomoćnik za učenje. Trenutna tema: " + topicTitle + ". Odgovaraj kratko, jasno, i na bosanskom jeziku."
-                : "Ti si AI pomoćnik za učenje. Odgovaraj kratko, jasno, i na bosanskom jeziku.";
+                ? "You are an AI study assistant. Current topic: " + topicTitle + ". Answer concisely, clearly, and in English. For mathematical formulas, use $formula$ for inline math and $$formula$$ for block math, never \\( \\) or \\[ \\]."
+                : "You are an AI study assistant. Answer concisely, clearly, and in English. For mathematical formulas, use $formula$ for inline math and $$formula$$ for block math, never \\( \\) or \\[ \\].";
         messages.add(new GroqRequest.Message("system", systemPrompt));
 
         for(ChatMessageDTO msg:messageHistory){
@@ -130,36 +130,35 @@ public class GroqService {
         }
 
         String prompt = """
-        Predmet: %s
-        Ispit je za %d dana (datum ispita: %s).
-        Danasnji datum: %s
-        
-        Teme koje treba obraditi (sa studentovom ličnom procjenom koliko sati mu treba):
-        %s
-        
-        Napravi PAMETAN raspored učenja, od danas do dana ispita (ne uključujući sam dan ispita).
-        
-        VAŽNO - KOLIKO ČESTO UČITI:
-        - Ako je ispit BLIZU (manje od 10 dana) - planiraj učenje SVAKI dan, jer nema vremena za pauze.
-        - Ako je ispit DALEKO (10 ili više dana) - NE moraš planirati svaki dan. Rasporedi dane učenja PAMETNO kroz preostalo vrijeme, sa danima pauze između, tako da ukupan broj dana učenja bude razuman (npr. za 30 dana do ispita, možda 12-15 dana stvarnog učenja je dovoljno, ostalo su pauze ili slobodni dani).
-        - Cilj je REALAN plan koji student stvarno može ispratiti, ne prenatrpan raspored.
-        
-        Ostala pravila:
-        1. NE radi sve sate jedne teme uzastopno - MIKSAJ teme kroz vrijeme
-        2. Poštuj studentovu procjenu ukupnih sati po temi
-        3. Teže/opsežnije teme rasporedi RANIJE
-        4. Zadnjih par dana PRED SAM ISPIT planiraj kao PONAVLJANJE svih tema
-        5. NIKAD ne stavljaj "hours": 0 - ako neki dan nije za učenje, jednostavno ga NE UKLJUČUJ u listu (preskoči ga)
-        6. Za svaki dan koji uključiš, dodaj kratak, KONKRETAN "focus" savjet - nikad ne ponavljaj isti tekst
-        
-        Odgovori ISKLJUČIVO validnim JSON nizom (samo dani KADA se stvarno uči, ne svi dani do ispita), bez ikakvog dodatnog teksta, u tačno ovom formatu:
-        [
-          {"date": "2026-08-12", "topicTitle": "tacan naziv teme iz liste iznad", "hours": 2, "focus": "kratak savjet sta raditi tog dana"}
-        ]
-        
-        VAŽNO: "date" mora biti u formatu YYYY-MM-DD. "topicTitle" mora biti TAČAN naziv jedne od tema navedenih iznad.
-        """.formatted(subjectName, daysUntilExam, examDate, LocalDate.now(), topicsListText.toString());
+    Subject: %s
+    The exam is in %d days (exam date: %s).
+    Today's date: %s
 
+    Topics to cover (with the student's own estimate of how many hours each needs):
+    %s
+
+    Create a SMART study schedule, from today until the exam day (not including the exam day itself).
+
+    IMPORTANT - HOW OFTEN TO STUDY:
+    - If the exam is CLOSE (less than 10 days) - plan studying EVERY day, since there's no time for breaks.
+    - If the exam is FAR (10 or more days) - you DON'T have to plan every day. Space out study days SMARTLY across the remaining time, with break days in between, so the total number of study days stays reasonable (e.g. for 30 days until the exam, maybe 12-15 days of actual studying is enough, the rest are breaks or free days).
+    - The goal is a REALISTIC plan the student can actually follow, not an overloaded schedule.
+
+    Other rules:
+    1. DON'T do all the hours of one topic in a row - MIX topics across time
+    2. Respect the student's estimated total hours per topic
+    3. Harder/more extensive topics should be scheduled EARLIER
+    4. The last few days RIGHT BEFORE THE EXAM should be planned as a REVIEW of all topics
+    5. NEVER put "hours": 0 - if a day isn't for studying, simply DON'T INCLUDE it in the list (skip it)
+    6. For every day you include, add a short, CONCRETE "focus" tip - never repeat the same text
+
+    Respond ONLY with a valid JSON array (only the days WHEN studying actually happens, not every day until the exam), without any additional text, in exactly this format:
+    [
+      {"date": "2026-08-12", "topicTitle": "exact topic name from the list above", "hours": 2, "focus": "short tip on what to do that day"}
+    ]
+
+    IMPORTANT: "date" must be in YYYY-MM-DD format. "topicTitle" must be the EXACT name of one of the topics listed above.
+    """.formatted(subjectName, daysUntilExam, examDate, LocalDate.now(), topicsListText.toString());
 
         String responseV1=generateContent(prompt);
 
