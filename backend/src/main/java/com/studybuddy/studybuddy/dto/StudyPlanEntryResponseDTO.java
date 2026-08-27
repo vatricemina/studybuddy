@@ -12,4 +12,5 @@ public class StudyPlanEntryResponseDTO {
     private Long topicId;
     private String topicTitle;
     private String focus;
+    private String subjectName;
 }

@@ -90,6 +90,7 @@ public class StudyPlanService {
         dto.setTopicId(entry.getTopic().getId());
         dto.setTopicTitle(entry.getTopic().getTitle());
         dto.setFocus(entry.getFocus());
+        dto.setSubjectName(entry.getTopic().getSubject().getName());
         return dto;
     }
 }
