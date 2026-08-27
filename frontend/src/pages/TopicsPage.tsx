@@ -1,53 +1,43 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { Trash2, Layers, Brain } from 'lucide-react';
 
 function TopicsPage(){
-    const {subjectId} = useParams();
-    const [topics, setTopics]=useState([]);
-    const [title,setTitle]=useState("");
-    const [estimatedHours,setEstimatedHours]=useState("");
+    const { subjectId } = useParams();
+    const [topics, setTopics] = useState([]);
+    const [title, setTitle] = useState("");
+    const [estimatedHours, setEstimatedHours] = useState("");
     const [error, setError] = useState("");
 
     async function fetchTopics(){
-        const token=localStorage.getItem("token");
-        const response=await axios.get("http://localhost:8080/api/topics",{
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:8080/api/topics", {
+            headers: { Authorization: `Bearer ${token}` }
         });
-
-        const filteredTopics=response.data.filter(
-            (topic)=>topic.subjectId==Number(subjectId)
-        );
-        setTopics(filteredTopics);
+        const filtered = response.data.filter((topic) => topic.subjectId === Number(subjectId));
+        setTopics(filtered);
     }
 
-    useEffect(()=>{
-        fetchTopics();
-    }, [subjectId]);
+    useEffect(() => { fetchTopics(); }, [subjectId]);
 
     async function handleAddTopic(){
-        const token=localStorage.getItem("token");
-
+        setError("");
         if (title.trim() === "" || estimatedHours === "") {
             setError("Please fill in all fields");
             return;
         }
+        if (Number(estimatedHours) <= 0) {
+            setError("Estimated hours must be greater than 0");
+            return;
+        }
 
+        const token = localStorage.getItem("token");
         await axios.post("http://localhost:8080/api/topics", {
-            title:title,
-            estimatedHours:Number(estimatedHours),
-            completed:false,
-            subjectId:Number(subjectId)
-        }, {
-            headers:{
-                Authorization: `Bearer ${token}`
-            }
-        });
+            title: title, estimatedHours: Number(estimatedHours), completed: false, subjectId: Number(subjectId)
+        }, { headers: { Authorization: `Bearer ${token}` } });
 
-        setTitle("");
-        setEstimatedHours("");
+        setTitle(""); setEstimatedHours("");
         fetchTopics();
     }
 
@@ -62,63 +52,55 @@ function TopicsPage(){
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">Topics</h1>
-                <p className="text-slate-500">Browse your topics or add a new one to keep studying.</p>
+                <h1 className="text-4xl font-extrabold text-emerald-50 mb-2">Topics</h1>
+                <p className="text-stone-400">Browse your topics or add a new one to keep studying.</p>
             </div>
 
             {topics.length === 0 ? (
-                <p className="text-slate-400 text-sm mb-8">No topics yet — add your first one below.</p>
+                <p className="text-stone-500 text-sm mb-8">No topics yet — add your first one below.</p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                     {topics.map((topic) => (
-                        <div key={topic.id} className="relative bg-white/80 p-5 rounded-2xl shadow-sm border border-indigo-100 hover:shadow-md transition">
-                            <p className="text-lg font-semibold text-slate-800">{topic.title}</p>
-                            <p className="text-xs text-slate-400 mt-1">Estimated hours: {topic.estimatedHours}</p>
-                            <div className="flex gap-2 mt-3">
-                                <Link to={`/topics/${topic.id}/flashcards`} className="bg-indigo-100 text-indigo-600 text-xs font-medium px-3 py-1.5 rounded-full hover:bg-indigo-200 transition">
-                                    Flashcards
+                        <div key={topic.id} className="bg-emerald-950/40 border border-emerald-900/50 rounded-2xl p-5">
+                            <div className="flex justify-between items-start mb-2">
+                                <p className="text-lg font-semibold text-emerald-50">{topic.title}</p>
+                                <button onClick={() => handleDeleteTopic(topic.id)} className="text-stone-500 hover:text-red-400 transition">
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                            <p className="text-sm text-stone-400 mb-3">Estimated hours: {topic.estimatedHours}</p>
+                            <div className="flex gap-2">
+                                <Link to={`/topics/${topic.id}/flashcards`} className="flex items-center gap-1 bg-emerald-900/40 text-emerald-300 text-xs font-medium px-3 py-1.5 rounded-full hover:bg-emerald-900/70 transition">
+                                    <Layers size={14} /> Flashcards
                                 </Link>
-                                <Link to={`/topics/${topic.id}/quiz`} className="bg-rose-100 text-rose-600 text-xs font-medium px-3 py-1.5 rounded-full hover:bg-rose-200 transition">
-                                    Quiz
+                                <Link to={`/topics/${topic.id}/quiz`} className="flex items-center gap-1 bg-emerald-900/40 text-emerald-300 text-xs font-medium px-3 py-1.5 rounded-full hover:bg-emerald-900/70 transition">
+                                    <Brain size={14} /> Quiz
                                 </Link>
                             </div>
-
-                            <button
-                                onClick={() => handleDeleteTopic(topic.id)}
-                                className="absolute bottom-3 right-3 text-slate-300 hover:text-red-400 transition"
-                                title="Delete topic"
-                            >
-                                🗑️
-                            </button>
-
                         </div>
                     ))}
                 </div>
             )}
 
-            <div className="bg-white/80 p-6 rounded-2xl shadow-sm border border-indigo-100 max-w-md">
-                <h2 className="text-lg font-semibold text-slate-700 mb-4">Add new topic</h2>
+            <div className="bg-emerald-950/40 border border-emerald-900/50 rounded-2xl p-6 max-w-md">
+                <h2 className="text-lg font-semibold text-emerald-50 mb-4">Add new topic</h2>
                 <input
                     type="text"
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
                 <input
                     type="number"
                     placeholder="Estimated hours"
                     value={estimatedHours}
                     onChange={(e) => setEstimatedHours(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    min="1"
+                    className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
-                {error && (
-                    <p className="text-sm text-red-500 mb-3">{error}</p>
-                )}
-                <button
-                    onClick={handleAddTopic}
-                    className="w-full bg-indigo-400 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition"
-                >
+                {error && <p className="text-sm text-red-400 mb-3">{error}</p>}
+                <button onClick={handleAddTopic} className="w-full bg-emerald-700 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-600 transition">
                     Add topic
                 </button>
             </div>

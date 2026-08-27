@@ -18,6 +18,8 @@ import Layout from './components/Layout';
 import StudyPlanPage from './pages/StudyPlanPage';
 import StudySessionPage from './pages/StudySessionPage';
 import StatisticsPage from './pages/StatisticsPage';
+import GenerateQuizPage from './pages/GenerateQuizPage';
+import GenerateFlashcardsPage from './pages/GenerateFlashcardsPage';
 
 
 
@@ -99,7 +101,7 @@ function App() {
               }
           />
           <Route
-              path="/subjects/:subjectId/study-plan"
+              path="/study-plan"
               element={
                   <ProtectedRoute>
                       <Layout>
@@ -137,6 +139,25 @@ function App() {
                       </Layout>
                   </ProtectedRoute>
               }
+          />
+
+          <Route
+              path="/quiz/new"
+              element={
+              <ProtectedRoute>
+                  <Layout>
+                      <GenerateQuizPage />
+                  </Layout>
+              </ProtectedRoute>}
+          />
+          <Route
+              path="/flashcards/new"
+              element={
+              <ProtectedRoute>
+                  <Layout>
+                      <GenerateFlashcardsPage />
+                  </Layout>
+              </ProtectedRoute>}
           />
       </Routes>
 

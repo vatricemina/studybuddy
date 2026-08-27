@@ -1,63 +1,58 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import QuizQuestionCard from '../components/QuizQuestionCard';
 
-
 function QuizPage(){
-    const {topicId}=useParams();
-    const [loading, setLoading]=useState(false);
-    const [quiz, setQuiz]=useState(null);
-    const [answers, setAnswers]=useState({}); //pamti sve odgovore za sva pitanja odjednom kao objekat {10:"B", 12:"A"} na pitanje s id 10 odgovorio je sa B, itd..
-    const [showResults, setShowResults]=useState(false); //pamti jel kviz predat
-    const navigate=useNavigate();
+    const { topicId } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [quiz, setQuiz] = useState(location.state?.quiz || null);
+    const [answers, setAnswers] = useState({});
+    const [showResults, setShowResults] = useState(false);
+    const [error, setError] = useState("");
 
 
     async function handleGenerate(){
         setLoading(true);
         try{
-            const token=localStorage.getItem("token");
-            const response=await axios.post("http://localhost:8080/api/quizzes/generate", {
-                topicId:Number(topicId)
+            const token = localStorage.getItem("token");
+            const response = await axios.post("http://localhost:8080/api/quizzes/generate", {
+                topicId: Number(topicId)
             }, {
-                headers:{
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setQuiz(response.data);
-            setAnswers({});  //resetuj ako je vec generisao pa hoce opet
-            setShowResults(false); //isto
-
+            setAnswers({});
+            setShowResults(false);
         }catch(error){
             console.log("Error generating quiz: ", error);
-            return;
         }finally{
             setLoading(false);
         }
-
     }
 
     function handleAnswerSelect(questionId, selectedOption){
-        setAnswers({...answers, [questionId]: selectedOption}); //nadovezuje na listu answers novi odgovor ili mijenja postojeci?
-        //pravi nov objekat
-        //...answers : [questionId] doda/zamijeni par za ovo konkretno pitanje
+        setAnswers({...answers, [questionId]: selectedOption});
     }
 
     async function handleSubmit(){
-        const answersArray=Object.keys(answers).map((questionId)=>({
+        if (Object.keys(answers).length < quiz.questions.length) {
+            setError("Please answer all questions before submitting");
+            return;
+        }
+
+        const answersArray = Object.keys(answers).map((questionId) => ({
             questionId: Number(questionId),
             userAnswer: answers[questionId]
         }));
-        //object.keys(answers) uzima objekat i vraca niz njegovih kljuceva, ovdje su ti id-evi pitanja
-        //.map mapira taj niz u oblik {{qId: -, userAns: -}, {---}, {---}...} ---->OBLIK KOJI BACKEND OCEKUJE U SUBMIT DTO-u!!
 
-        const token=localStorage.getItem("token");
-        const response=await axios.put(`http://localhost:8080/api/quizzes/${quiz.id}/submit`,{
-            answers:answersArray
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`http://localhost:8080/api/quizzes/${quiz.id}/submit`, {
+            answers: answersArray
         }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
         });
         setQuiz(response.data);
         setShowResults(true);
@@ -70,23 +65,23 @@ function QuizPage(){
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-4xl font-extrabold text-indigo-600 mb-2">
+                <h1 className="text-4xl font-extrabold text-emerald-50 mb-2">
                     Quiz {quiz ? `on ${quiz.topicTitle}` : ""}
                 </h1>
-                <p className="text-slate-500">Test your knowledge with an AI-generated quiz.</p>
+                <p className="text-stone-400">Test your knowledge with an AI-generated quiz.</p>
             </div>
 
             <div className="flex gap-3 mb-8">
                 <button
                     onClick={handleGenerate}
                     disabled={loading}
-                    className="bg-indigo-400 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition disabled:opacity-50"
+                    className="bg-emerald-700 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-emerald-600 transition disabled:opacity-50"
                 >
                     {loading ? "Generating..." : "Generate new quiz"}
                 </button>
                 <button
                     onClick={goToHistory}
-                    className="bg-white text-indigo-500 border border-indigo-200 px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-50 transition"
+                    className="bg-transparent border border-emerald-700 text-emerald-300 px-5 py-2 rounded-lg text-sm font-medium hover:bg-emerald-900/40 transition"
                 >
                     Previously generated quizzes
                 </button>
@@ -103,18 +98,22 @@ function QuizPage(){
                     />
                 ))}
             </div>
+            {error &&  (
+                <p className="text-sm text-rose-400 mb-4">{error}</p>
+            )}
+
 
             {quiz && !showResults && (
                 <button
                     onClick={handleSubmit}
-                    className="mt-6 bg-rose-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-500 transition"
+                    className="mt-6 bg-rose-700 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition"
                 >
                     Submit Quiz
                 </button>
             )}
 
             {showResults && (
-                <h2 className="mt-6 text-xl font-semibold text-slate-700">
+                <h2 className="mt-6 text-xl font-semibold text-emerald-50">
                     Score: {quiz.score} / {quiz.questions.length}
                 </h2>
             )}

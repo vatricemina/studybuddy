@@ -18,7 +18,7 @@ function StudySessionPage() {
     const [isBreak, setIsBreak]=useState(false);
     const [sessionId, setSessionId] = useState(null);
     const [totalSecondsElapsed, setTotalSecondsElapsed] = useState(0);
-
+    const [startedAtValue, setStartedAtValue] = useState(null);
     const [sessionEnded, setSessionEnded]=useState(false);
     const [sessionStatus, setSessionStatus]=useState("");
 
@@ -49,17 +49,29 @@ function StudySessionPage() {
        };
    }, [sessionStarted, isBreak]);
 
+    function getLocalDateTimeString() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
 
 
     async function handleStart(){
         const token=localStorage.getItem("token");
+        const startedAt = getLocalDateTimeString();
+        setStartedAtValue(startedAt);
         const response=await axios.post("http://localhost:8080/api/study-sessions", {
             topicId: Number(topicId),
             studyIntervalMinutes: studyMinutes,
             breakIntervalMinutes: breakMinutes,
             plannedDurationMinutes: plannedMinutes,
             status: "IN_PROGRESS",
-            startedAt: new Date().toISOString()
+            startedAt: getLocalDateTimeString()
         }, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -86,7 +98,8 @@ function StudySessionPage() {
             actualDurationMinutes: actualMinutes,
             cyclesCompleted: cyclesCompleted-1,
             status: status,
-            endedAt: new Date().toISOString()
+            startedAt: startedAtValue,
+            endedAt: getLocalDateTimeString()
         }, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -118,35 +131,35 @@ function StudySessionPage() {
         return (
             <div>
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-slate-800 mb-2">Study Session</h1>
-                    <p className="text-slate-500">Set your intervals and start a focused study session.</p>
+                    <h1 className="text-4xl font-extrabold text-emerald-50 mb-2">Study Session</h1>
+                    <p className="text-stone-400">Set your intervals and start a focused study session.</p>
                 </div>
 
-                <div className="bg-white/80 p-6 rounded-2xl shadow-sm border border-indigo-100 max-w-md">
-                    <label className="block text-sm text-slate-600 mb-1">Study interval (min)</label>
+                <div className="bg-emerald-950/40 border border-emerald-900/50 rounded-2xl p-6 max-w-md">
+                    <label className="block text-sm text-stone-400 mb-1">Study interval (min)</label>
                     <input
                         type="number"
                         value={studyMinutes}
                         onChange={(e) => setStudyMinutes(Number(e.target.value))}
-                        className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                     />
-                    <label className="block text-sm text-slate-600 mb-1">Break interval (min)</label>
+                    <label className="block text-sm text-stone-400 mb-1">Break interval (min)</label>
                     <input
                         type="number"
                         value={breakMinutes}
                         onChange={(e) => setBreakMinutes(Number(e.target.value))}
-                        className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                     />
-                    <label className="block text-sm text-slate-600 mb-1">Planned total (min)</label>
+                    <label className="block text-sm text-stone-400 mb-1">Planned total (min)</label>
                     <input
                         type="number"
                         value={plannedMinutes}
                         onChange={(e) => setPlannedMinutes(Number(e.target.value))}
-                        className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-4 text-sm text-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                     />
                     <button
                         onClick={handleStart}
-                        className="w-full bg-indigo-400 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition"
+                        className="w-full bg-emerald-700 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-600 transition"
                     >
                         Start
                     </button>
@@ -156,21 +169,21 @@ function StudySessionPage() {
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-100px)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-140px)]">
             <div className="text-center flex flex-col justify-center">
-                <h1 className="text-2xl font-bold text-slate-800 mb-6">{isBreak ? "Break" : "Study"} Time</h1>
+                <h1 className="text-2xl font-bold text-emerald-50 mb-6">{isBreak ? "Break" : "Study"} Time</h1>
 
                 <div className={`w-52 h-52 rounded-full border-8 mx-auto flex items-center justify-center text-4xl font-semibold ${
-                    isBreak ? "border-rose-300 text-rose-500" : "border-indigo-300 text-indigo-500"
+                    isBreak ? "border-rose-500 text-rose-400" : "border-emerald-600 text-emerald-300"
                 }`}>
                     {formatTime(secondsLeft)}
                 </div>
 
-                <p className="text-slate-500 mt-6">Cycles completed: {cyclesCompleted}</p>
+                <p className="text-stone-400 mt-6">Cycles completed: {cyclesCompleted}</p>
 
                 <button
                     onClick={handleEnd}
-                    className="mt-6 bg-rose-400 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-500 transition mx-auto"
+                    className="mt-6 bg-rose-700 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition mx-auto"
                 >
                     End Session
                 </button>

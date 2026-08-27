@@ -30,11 +30,11 @@ function RegisterPage(){
             }
         }
     }
-
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-rose-50 to-indigo-50">            <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
-                <h1 className="text-3xl font-bold text-indigo-500 mb-2 text-center">StudyBuddy</h1>
-                <p className="text-sm text-slate-500 mb-6 text-center">
+        <div className="min-h-screen flex items-center justify-center bg-neutral-950">
+            <div className="bg-emerald-950/40 border border-emerald-900/50 p-8 rounded-2xl shadow-md w-full max-w-sm">
+                <h1 className="text-3xl font-bold text-emerald-50 mb-2 text-center">StudyBuddy</h1>
+                <p className="text-sm text-stone-400 mb-6 text-center">
                     Create your account and start studying smarter today.
                 </p>
 
@@ -43,42 +43,44 @@ function RegisterPage(){
                     placeholder="First name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
                 <input
                     type="text"
                     placeholder="Last name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
                 <input
                     type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-3 text-sm text-emerald-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
                 <input
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-slate-200 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="w-full bg-neutral-900 border border-emerald-900/50 rounded-lg px-4 py-2 mb-4 text-sm text-emerald-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
+
                 {error && (
-                    <p className="text-sm text-red-500 mb-4 text-center">{error}</p>
+                    <p className="text-sm text-rose-400 mb-4 text-center">{error}</p>
                 )}
+
                 <button
                     onClick={handleRegister}
-                    className="w-full bg-indigo-400 text-white py-2 rounded-lg font-medium hover:bg-indigo-500 transition"
+                    className="w-full bg-emerald-700 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-600 transition"
                 >
                     Register
                 </button>
 
-                <p className="text-sm text-slate-500 text-center mt-4">
+                <p className="text-sm text-stone-400 text-center mt-4">
                     Already have an account?{" "}
-                    <Link to="/login" className="text-indigo-500 font-medium hover:underline">
+                    <Link to="/login" className="text-emerald-400 font-medium hover:underline">
                         Log in
                     </Link>
                 </p>

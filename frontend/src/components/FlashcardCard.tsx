@@ -10,9 +10,9 @@ function FlashcardCard({question, answer}){
     return (
         <div
             onClick={handleClick}
-            className="bg-white/80 border border-indigo-100 rounded-2xl shadow-sm p-6 w-64 cursor-pointer hover:shadow-md transition flex items-center justify-center text-center min-h-[140px]"
+            className="bg-emerald-950/40 border border-emerald-900/50 rounded-2xl shadow-sm p-6 w-64 cursor-pointer hover:border-emerald-700 transition flex items-center justify-center text-center min-h-[140px]"
         >
-            <p className="text-slate-700">{isFlipped ? answer : question}</p>
+            <p className="text-emerald-50">{isFlipped ? answer : question}</p>
         </div>
     );
 }
