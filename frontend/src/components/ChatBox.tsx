@@ -5,15 +5,20 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-function ChatBox({ topicId }) {
-    const [messages, setMessages] = useState([]);
+interface Message {
+    role: string;
+    content: string;
+}
+
+function ChatBox({ topicId }: { topicId?: number | string | null }) {
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState("");
     const [loading, setLoading] = useState(false);
 
     async function handleSend() {
         if (inputText.trim() === "") return;
 
-        const userMessage = { role: "user", content: inputText };
+        const userMessage: Message = { role: "user", content: inputText };
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setInputText("");
@@ -28,7 +33,7 @@ function ChatBox({ topicId }) {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            const aiMessage = { role: "assistant", content: response.data };
+            const aiMessage: Message = { role: "assistant", content: response.data };
             setMessages([...updatedMessages, aiMessage]);
         } catch (error) {
             console.log("Error sending message: ", error);
@@ -37,7 +42,7 @@ function ChatBox({ topicId }) {
         }
     }
 
-    function handleKeyDown(e) {
+    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === "Enter") handleSend();
     }
 

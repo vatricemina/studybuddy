@@ -3,8 +3,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Trash2, BookOpen, ClipboardList, BarChart3 } from 'lucide-react';
 
-function daysUntil(dateString){
-    const diff = new Date(dateString) - new Date();
+function daysUntil(dateString: string) {
+    const diff = new Date(dateString).getTime() - new Date().getTime();
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
 
