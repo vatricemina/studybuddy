@@ -12,7 +12,7 @@ function TopicsPage(){
 
     async function fetchTopics(){
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/api/topics", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/topics`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         const filtered = response.data.filter((topic) => topic.subjectId === Number(subjectId));
@@ -33,7 +33,7 @@ function TopicsPage(){
         }
 
         const token = localStorage.getItem("token");
-        await axios.post("http://localhost:8080/api/topics", {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/topics`, {
             title: title, estimatedHours: Number(estimatedHours), completed: false, subjectId: Number(subjectId)
         }, { headers: { Authorization: `Bearer ${token}` } });
 
@@ -43,7 +43,7 @@ function TopicsPage(){
 
     async function handleDeleteTopic(topicId) {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:8080/api/topics/${topicId}`, {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/topics/${topicId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         fetchTopics();

@@ -10,7 +10,7 @@ function StudyPlanPage() {
 
     async function fetchExistingPlans(){
         const token=localStorage.getItem("token");
-        const subjectsResponse=await axios.get("http://localhost:8080/api/subjects", {
+        const subjectsResponse=await axios.get(`${import.meta.env.VITE_API_URL}/api/subjects`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         const subjects = subjectsResponse.data;
@@ -18,7 +18,7 @@ function StudyPlanPage() {
         let allEntries=[];//dohvati sve stavke od svih predmeta
         for (const subject of subjects) {
             try {
-                const response = await axios.get(`http://localhost:8080/api/study-plan/${subject.id}`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/study-plan/${subject.id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 allEntries = [...allEntries, ...response.data];
@@ -38,7 +38,7 @@ function StudyPlanPage() {
         setLoading(true);
         try{
             const token=localStorage.getItem("token");
-            const subjectsResponse=await axios.get("http://localhost:8080/api/subjects", {
+            const subjectsResponse=await axios.get(`${import.meta.env.VITE_API_URL}/api/subjects`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const subjects = subjectsResponse.data;
@@ -50,7 +50,7 @@ function StudyPlanPage() {
             }
             let allEntries=[];
             for(const subject of subjects){ //generise plan za svaki predmet i sve stavi u jednu listu allEntries
-                const response=await axios.post("http://localhost:8080/api/study-plan/generate", {
+                const response=await axios.post(`${import.meta.env.VITE_API_URL}/api/study-plan/generate`, {
                     subjectId: subject.id
                 }, { headers: { Authorization: `Bearer ${token}` } });
                 allEntries=[...allEntries, ...response.data];

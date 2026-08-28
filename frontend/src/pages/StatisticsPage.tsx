@@ -10,7 +10,7 @@ function StatisticsPage() {
 
     async function fetchStats() {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/subjects/${subjectId}/stats`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/subjects/${subjectId}/stats`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setStats(response.data);
@@ -18,7 +18,7 @@ function StatisticsPage() {
 
     async function fetchSessions() {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:8080/api/study-sessions/subject/${subjectId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/study-sessions/subject/${subjectId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setSessions(response.data);

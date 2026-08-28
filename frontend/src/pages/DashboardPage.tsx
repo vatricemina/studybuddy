@@ -23,7 +23,7 @@ function DashboardPage(){
 
     async function fetchSubjects(){
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/api/subjects", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/subjects`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setSubjects(response.data);
@@ -31,7 +31,7 @@ function DashboardPage(){
 
     async function fetchUser(){
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/api/users/me", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/me`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setFirstName(response.data.firstName);
@@ -53,7 +53,7 @@ function DashboardPage(){
         }
 
         const token = localStorage.getItem("token");
-        await axios.post("http://localhost:8080/api/subjects", {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/subjects`, {
             name: name, examDate: examDate, difficulty: Number(difficulty)
         }, { headers: { Authorization: `Bearer ${token}` } });
 
@@ -63,7 +63,7 @@ function DashboardPage(){
 
     async function handleDeleteSubject(subjectId){
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:8080/api/subjects/${subjectId}`, {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/subjects/${subjectId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         fetchSubjects();

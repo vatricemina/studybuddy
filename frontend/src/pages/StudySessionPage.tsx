@@ -65,7 +65,8 @@ function StudySessionPage() {
         const token=localStorage.getItem("token");
         const startedAt = getLocalDateTimeString();
         setStartedAtValue(startedAt);
-        const response=await axios.post("http://localhost:8080/api/study-sessions", {
+        const response=await axios.post(`${import.meta.env.VITE_API_URL}/api/study-sessions`
+            , {
             topicId: Number(topicId),
             studyIntervalMinutes: studyMinutes,
             breakIntervalMinutes: breakMinutes,
@@ -90,7 +91,7 @@ function StudySessionPage() {
         const actualMinutes=Math.floor(totalSecondsElapsed/60);
         const status=actualMinutes>=plannedMinutes ? "COMPLETED" : "ABANDONED";
 
-        await axios.put(`http://localhost:8080/api/study-sessions/${sessionId}`, {
+        await axios.put(`${import.meta.env.VITE_API_URL}/api/study-sessions/${sessionId}`, {
             topicId: Number(topicId),
             studyIntervalMinutes: studyMinutes,
             breakIntervalMinutes: breakMinutes,

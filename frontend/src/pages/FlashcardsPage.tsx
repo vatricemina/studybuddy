@@ -15,7 +15,7 @@ function FlashcardsPage(){
 
     async function fetchExistingFlashcards(){
         const token=localStorage.getItem("token");
-        const response=await axios.get("http://localhost:8080/api/flashcards", {
+        const response=await axios.get(`${import.meta.env.VITE_API_URL}/api/flashcards`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -29,7 +29,7 @@ function FlashcardsPage(){
 
     async function fetchTopicSubject(){ //za vracanje na subjects/subjectId/topics page
         const token=localStorage.getItem("token");
-        const response=await axios.get("http://localhost:8080/api/topics", {
+        const response=await axios.get(`${import.meta.env.VITE_API_URL}/api/topics`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         const topic=response.data.find((t)=>t.id===Number(topicId));
@@ -45,7 +45,7 @@ function FlashcardsPage(){
         setLoading(true);
         try{
             const token=localStorage.getItem("token");
-            const response=await axios.post("http://localhost:8080/api/flashcards/generate", {
+            const response=await axios.post(`${import.meta.env.VITE_API_URL}/api/flashcards/generate`, {
                 topicId:Number(topicId)
             }, {
                 headers: {

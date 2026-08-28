@@ -13,10 +13,10 @@ function GenerateFlashcardsPage(){
 
     async function fetchData(){
         const token = localStorage.getItem("token");
-        const subjectsResponse = await axios.get("http://localhost:8080/api/subjects", {
+        const subjectsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/subjects`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        const topicsResponse = await axios.get("http://localhost:8080/api/topics", {
+        const topicsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/topics`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         setSubjects(subjectsResponse.data);
@@ -38,7 +38,10 @@ function GenerateFlashcardsPage(){
         setLoading(true);
         try{
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8080/api/flashcards/generate", {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/flashcards/generate`
+
+
+                , {
                 topicId: Number(selectedTopic)
             }, { headers: { Authorization: `Bearer ${token}` } });
 

@@ -21,7 +21,7 @@ function ChatBox({ topicId }) {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:8080/api/chat", {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat`, {
                 topicId: topicId ? Number(topicId) : null,
                 messages: updatedMessages
             }, {

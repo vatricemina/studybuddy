@@ -13,10 +13,10 @@ function GenerateQuizPage(){
 
     async function fetchData(){
         const token=localStorage.getItem("token");
-        const subjectResponse=await axios.get("http://localhost:8080/api/subjects", {
+        const subjectResponse=await axios.get(`${import.meta.env.VITE_API_URL}/api/subjects`, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        const topicsResponse = await axios.get("http://localhost:8080/api/topics", {
+        const topicsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/topics`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -37,7 +37,7 @@ function GenerateQuizPage(){
         setLoading(true);
         try{
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:8080/api/quizzes/generate", {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/quizzes/generate`, {
                 topicId: Number(selectedTopic)
             }, { headers: { Authorization: `Bearer ${token}` } });
             navigate(`/topics/${selectedTopic}/quiz`, {state: {quiz:response.data}});
