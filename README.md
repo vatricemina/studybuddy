@@ -1,4 +1,4 @@
-# 📚 StudyBuddy — AI-Powered Study Assistant
+# StudyBuddy — AI-Powered Study Assistant
 
 StudyBuddy is a full-stack web application that helps students organize their studies, generate AI-powered study materials, and track their progress toward exams.
 
@@ -9,19 +9,19 @@ StudyBuddy is a full-stack web application that helps students organize their st
 
 ---
 
-## ✨ Features
+## Features
 
-- 📖 **Subject & Topic Management** — organize your subjects and topics with exam dates and difficulty levels
-- 🧠 **AI Flashcards** — generate flashcards automatically for any topic
-- 📝 **AI Quiz Generator** — test your knowledge with AI-generated multiple choice quizzes, complete with scoring and history
-- 📅 **AI Study Plan** — get a personalized, day-by-day study schedule tailored to your exam dates
-- ⏱️ **Pomodoro Study Sessions** — track focused study sessions with customizable work/break intervals
-- 💬 **AI Chat Assistant** — ask questions and get help while you study
-- 📊 **Progress Statistics** — track your total study time and quiz performance per subject
+- **Subject & Topic Management** — organize your subjects and topics with exam dates and difficulty levels
+- **AI Flashcards** — generate flashcards automatically for any topic
+- **AI Quiz Generator** — test your knowledge with AI-generated multiple choice quizzes, complete with scoring and history
+- **AI Study Plan** — get a personalized, day-by-day study schedule tailored to your exam dates
+- **Pomodoro Study Sessions** — track focused study sessions with customizable work/break intervals
+- **AI Chat Assistant** — ask questions and get help while you study
+- **Progress Statistics** — track your total study time and quiz performance per subject
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 |---|---|
@@ -31,22 +31,32 @@ StudyBuddy is a full-stack web application that helps students organize their st
 
 ---
 
-## 🚀 Live Demo
+## Live Demo
 
 - **Frontend:** [studybuddy-one-mu.vercel.app](https://studybuddy-one-mu.vercel.app)
 - **Backend API:** [studybuddy-vesx.onrender.com](https://studybuddy-vesx.onrender.com)
 
-> ⚠️ The backend runs on a free tier and may take 30–60 seconds to wake up on the first request.
+> The backend runs on a free tier and may take 30–60 seconds to wake up on the first request.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
-*(add screenshots here later)*
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Study Plan
+![Study Plan](screenshots/studyplan.png)
+
+### Quiz
+![Quiz](screenshots/quiz.png)
+
+### AI Chat
+![AI Chat](screenshots/aichat.png)
 
 ---
 
-## ⚙️ Getting Started
+## Getting Started
 
 ### Backend
 
@@ -66,6 +76,6 @@ npm run dev
 
 ---
 
-## 👩‍💻 Author
+## Author
 
-**Emina Vatrić** · 2026
+Emina Vatrić · 2026
